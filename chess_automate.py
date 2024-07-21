@@ -1,27 +1,186 @@
+from abc import ABC, abstractmethod
+
 import pyautogui
 import cv2
 import numpy as np
 from PIL import Image
 import time
 import matplotlib.pyplot as plt
+import logging
+from operator import itemgetter
+from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+import chess
+import chess.engine
+from random import random
+from datetime import datetime,timedelta
+import time
 
+from logging import FileHandler, StreamHandler
+from logging.handlers import RotatingFileHandler
+
+handlers = [
+    FileHandler('logs/log.log', encoding = 'utf-8'),  # Default mode='a', encoding=None
+    StreamHandler(),  # Default stream=sys.stderr
+]
+logging.basicConfig(handlers=handlers, format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+
+class new_move_has_occured(object):
+  
+  def __init__(self, moves):
+    self.moves = moves
+    self.num_of_moves = len(moves)    
+
+  def __call__(self, driver):
+    #//*[@id="main-wrap"]/main/div[1]/rm6/l4x/i5z[1]
+    #//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb
+    #mon_moves_we = driver.find_elements_by_class_name("move")   # Finding the referenced element
+    try:
+        element = driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/div/p[2]')
+        gameover = element.is_displayed()
+        if gameover:
+            return driver.find_elements_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwbd')
+    except:
+        gameover=False
+    mon_moves_we = driver.find_elements_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwbd')
+    mon_moves = [move.text for move in mon_moves_we]
+    if mon_moves and self.moves:
+        war = self.num_of_moves < len(mon_moves) or self.moves[-1] != mon_moves[-1]
+    else:
+        war = self.num_of_moves < len(mon_moves)
+    if war:
+        return mon_moves_we[-1]
+    else:
+        return False
+
+class BrowserInterface(ABC):
+
+    @abstractmethod
+    def configure_browser(self):
+        pass
+
+class ChessSiteInterface(ABC):
+    
+    @abstractmethod
+    def open_board(self):
+        pass        
+
+class ChromeBrowser(BrowserInterface):
+    def __init__(self, user_data_dir: str, web_driver_path: str):
+        #chromepath = r"C:\Users\MJakimiuk\OneDrive\Documents\py\stockfish\chromedriver.exe"    
+        self.user_data_dir = user_data_dir
+        self.web_driver_path = web_driver_path
+        
+    def configure_browser(self):
+        options = webdriver.ChromeOptions() 
+        #options.add_argument(r"user-data-dir=C:\Users\MJakimiuk\AppData\Local\Google\Chrome\User Data")
+        options.add_argument("user-data-dir="+self.user_data_dir)
+        self.options = options
+        self.driver = webdriver.Chrome(executable_path=self.web_driver_path,chrome_options=self.options)
+        return self.driver
+
+class FirefoxBrowser(BrowserInterface):
+    def __init__(self):
+        pass
+    def configure_browser(self):
+        pass
+
+class LichessSite(ChessSiteInterface):
+    def __init__(self, driver):
+        self.driver = driver
+        self.site = 'https://www.lichess.org/'
+        self.click_colours_keys = {'green' : None,
+                                    'blue': ['alt'],
+                                    'red': ['shift'],
+                                    'yellow': ['alt','shift']
+                                    }
+        
+        self.arrow_colours_keys = {'green' : None,
+                                    'blue': ['alt'],
+                                    'red': ['shift'],
+                                    'yellow': ['alt','shift']
+                                    }
+        
+    def open_board(self):
+        self.driver.get(self.site)
+        #driver = webdriver.Chrome(executable_path=chromepath)
+        waiter = WebDriverWait(self.driver, 600)
+        waiter.until(EC.presence_of_element_located((By.XPATH,'//*[@id="main-wrap"]/main/div[1]/rm6/div[1]')))
+        if self.driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/div[1]/div').get_attribute("class")=='cg-wrap orientation-black manipulable':
+            self.color = 'black'
+        else:
+            self.color = 'white'     
+        return self.color, self.driver
+    
+    def wait_for_move(self, moves):
+        try:
+            element = self.driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/div/p[2]')
+            gameover = element.is_displayed()
+        except:
+            gameover=False
+        if gameover:
+            color = 'white'
+            return color, moves, gameover
+        else:
+            gameover = False
+        #waiter.until(EC.presence_of_element_located((By.ID, "logout"))
+        #moves = driver.find_elements_by_class_name("move")
+        waiter = WebDriverWait(self.driver, 600)
+        move_we = waiter.until(new_move_has_occured(moves))
+        #moves=copy.deepcopy(moves_d)
+        #moves = driver.find_elements_by_class_name("move")
+        moves = [move.text for move in moves_we]
+
+class ChessDotComSite(ChessSiteInterface):
+    def __init__(self, driver):
+        self.driver = driver
+        self.site = 'https://www.chess.com/'
+        self.click_colours_keys = {
+                                    'red' : None,
+                                    'yellow': ['ctrl'],
+                                    'green': ['shift'],
+                                    'blue': ['alt']   
+                                    } 
+        self.arrow_colours_keys = {
+                                'yellow' : [None],
+                                'red': ['ctrl'],
+                                'green': ['shift'],
+                                'blue': ['alt']
+                                }
+        
+    def open_board(self):
+        pass
+
+class Factory:
+    
+    @staticmethod
+    def create_browser(browser_choice: str, user_data_dir: str, web_driver_path: str):
+        if browser_choice.lower() == 'chrome':
+            return ChromeBrowser(user_data_dir, web_driver_path)
+        elif browser_choice.lower() == 'firefox':
+            return FirefoxBrowser(user_data_dir, web_driver_path)
+        else:
+            raise ValueError(f"Unsupported browser: {browser_choice}")
+    
+    @staticmethod
+    def create_chess_site(site_choice, driver):
+        if site_choice.lower() == 'chess.com':
+            return ChessDotComSite(driver)
+        elif site_choice.lower() == 'lichess.org':
+            return LichessSite(driver)
+        else:
+            raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessBoardClicker:
-    def __init__(self, debug_mode: bool = True, white_perspective: bool = True):
+    def __init__(self, debug_mode: bool = True, white_perspective: bool = True, site: str = 'chess.com'):
         self.white_perspective = white_perspective
         self.debug_mode = debug_mode
         self.squares = {}
+        self.site = site
         self.chessboard_contour = None
-        self.click_colours_keys = {'red' : None,
-                        'yellow': 'ctrl',
-                        'green': 'shift',
-                        'blue': 'alt'
-                        }
-        self.arrow_colours_keys = {'yellow' : None,
-                        'red': 'ctrl',
-                        'green': 'shift',
-                        'blue': 'alt'
-                        }
+         
 
     def convert_to_chess_notation(self, row_index, column_index, is_white_perspective):
         column_letters = 'abcdefgh' if is_white_perspective else 'hgfedcba'
@@ -56,10 +215,6 @@ class ChessBoardClicker:
                 if area > max_area:
                     max_area = area
                     chessboard_contour = approx
-        # Rysowanie konturu szachownicy na obrazie (opcjonalne)
-        if chessboard_contour is not None and self.debug_mode:
-            cv2.drawContours(screenshot_cv, [chessboard_contour], -1, (0, 255, 0), 3)
-            cv2.imwrite("chessboard_detected.png", screenshot_cv)
         # Zakładamy, że szachownica to prostokąt
         if chessboard_contour is not None:
             # Sortujemy punkty konturu, aby ustalić rogi
@@ -72,6 +227,9 @@ class ChessBoardClicker:
             # Wyliczenie rozmiaru pola
             self.square_width = (self.bottom_right[0] - self.bottom_left[0]) / 8
             self.square_height = (self.bottom_left[1] - self.top_left[1]) / 8
+            # Rysowanie konturu szachownicy na obrazie (opcjonalne)
+            if chessboard_contour is not None and self.debug_mode:
+                cv2.drawContours(screenshot_cv, [chessboard_contour], -1, (0, 255, 0), 3)
             # Wyliczenie środków pól
             i=0
             for row in range(8):
@@ -83,32 +241,44 @@ class ChessBoardClicker:
                     bottom = int(top + self.square_height)
                     self.squares[column_letter+row_number] = {'column_notation': column_letter, 'row_notation': row_number, 'row': row, 'col': col, 'top_left': (left, top), 'bottom_right': (right, bottom), 'center': (left + self.square_width // 2, top + self.square_height // 2)}
                     i+=1
+                    if self.debug_mode:
+                        cv2.rectangle(screenshot_cv, (left, top), (right, bottom), (0, 0, 255), 1)
+                        #cv2.drawContours(screenshot_cv, [chessboard_contour], -1, (0, 0, 255), 2)
+            if self.debug_mode:
+                cv2.imwrite("chessboard_detected.png", screenshot_cv)
 
-    def highlight_square(self, square_name, speed: float = 0.1, colour: str = 'red'):
+    def highlight_square(self, square_name, speed: float = 0.3, colour: str = 'red'):
         square = self.squares[square_name]
-        center_x, center_y = square['center']
+        center_x, center_y = square['center']        
+        keys = self.click_colours_keys[self.site][colour]
+        if keys is not None:
+            for key in keys:
+                pyautogui.keyDown(key)
         pyautogui.moveTo(center_x, center_y, duration=speed)
-        key = self.click_colours_keys[colour]
-        if key is not None:
-            pyautogui.keyDown(key)
-        pyautogui.rightClick()
-        if key is not None:
-            pyautogui.keyUp(key)
+        pyautogui.mouseDown(button='right')
+        time.sleep(0.1)
+        pyautogui.mouseUp(button='right')
+        if keys is not None:
+            for key in keys:
+                pyautogui.keyUp(key)
 
-    def draw_arrow(self, start_square, end_square, speed: float = 0.1, colour: str = 'red'):
+    def draw_arrow(self, start_square, end_square, speed: float = 0.3, colour: str = 'red'):
         start_square = self.squares[start_square]
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
-        end_x, end_y = end_square['center']
+        end_x, end_y = end_square['center']        
+        keys = self.arrow_colours_keys[self.site][colour]
+        if keys is not None:
+            for key in keys:
+                pyautogui.keyDown(key)
         pyautogui.moveTo(start_x, start_y, duration=speed)
-        key = self.arrow_colours_keys[colour]
-        if key is not None:
-            pyautogui.keyDown(key)
+        time.sleep(0.1)
         pyautogui.dragTo(end_x, end_y, duration=speed, button='right')
-        if key is not None:
-            pyautogui.keyUp(key)
+        if keys is not None:
+            for key in keys:
+                pyautogui.keyUp(key)
     
-    def make_move(self, start_square, end_square, speed: float = 0.1):
+    def make_move(self, start_square, end_square, speed: float = 0.3):
         start_square = self.squares[start_square]
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
@@ -117,16 +287,87 @@ class ChessBoardClicker:
         pyautogui.dragTo(end_x, end_y, duration=speed, button='left')
 
 
+class ChessGame:
+    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, engine_options: dict = None, moves: list = []):
+        self.color = color_perspective
+        if self.color == 'white':
+            self.white_perspective = True
+        else:
+            self.white_perspective = False
+        self.moves = moves
+        self.gameover = False
+        self.board = chess.Board()
+        if moves:
+            for move in moves:
+                self.board.push_san(move)
+        self.engine_path = engine_path
+        self.engine_options = engine_options
+        self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+        if engine_options:
+            for option, value in engine_options.items():
+                self.engine.configure({option: value})
+        self.clicker = ChessBoardClicker(debug_mode=False, white_perspective=self.white_perspective)
+        self.Browser = browser_interface
+
+    def make_move(self, move):
+        self.board.push_san(move)
+        self.moves.append(move)
+        return self.board
+    
+    def find_best_move(self, time_limit: int = 5, multipv: int = 5):
+        info = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit),multipv=multipv)
+        if multipv == 1:
+            return info
+        best_cp = -1e10
+        for i in range(multipv):
+            if self.color == 'white':
+                cp = info[i]['score'].white().cp
+            else:
+                cp = info[i]['score'].black().cp
+            if cp > best_cp:
+                best_cp = cp
+                best_score = info[i]
+        return best_score
+
+def main():
+    browser_choice = 'chrome'
+    site_choice = 'lichess.org'
+    browser_driver_path = r"C:\Users\MJakimiuk\OneDrive\Documents\py\stockfish\chromedriver.exe"
+    user_data_dir = r"C:\Users\MJakimiuk\AppData\Local\Google\Chrome\User Data"
+    engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
+    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz"
+    engine_options = {
+        "WeightsFile": engine_wieghts_path,
+        "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
+        "MinibatchSize": "1",
+        "MaxPrefetch": "4"
+    }
+    browser = Factory.create_browser(browser_choice)
+    driver = browser.configure_browser()
+    site = LichessSite(driver)
+    color, driver = site.open_board()
+    game = ChessGame(color, engine_path, browser, engine_options=engine_options)
+    game.clicker.get_squares()
+    moves = []
+    while not game.gameover:
+        color, moves, gameover = site.wait_for_move(moves)
+        if gameover:
+            game.gameover = True
+            break
+        if color == 'white':
+            move = game.find_best_move(time_limit=5, multipv=1)['pv'][0]
+            game.make_move(move)
+            game.clicker.make_move(move[:2], move[2:])
+            logging.info(f'White played: {move}')
+            logging.info(f'FEN: {game.board.fen()}')
+        else:
+            pass
+    driver.quit()
+
+
 if __name__ == "__main__":
-    white_perspective = True
-    clicker = ChessBoardClicker(debug_mode=True, white_perspective=white_perspective)
-    clicker.get_squares()
-    clicker.highlight_square("a1", colour='red')
-    clicker.highlight_square("b3", colour='blue')
-    clicker.highlight_square("e2", colour='green')
-    clicker.highlight_square("h8", colour='yellow')
-    clicker.highlight_square("h1")
-    clicker.highlight_square("f1")
-    clicker.draw_arrow("d2", "e4", colour='green')
-    clicker.draw_arrow("g6", "h8")
-    clicker.make_move("c4", "b5")
+    main()
+
+
+
+        
