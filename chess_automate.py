@@ -41,17 +41,17 @@ class new_move_has_occured(object):
         element = driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/div/p[2]')
         gameover = element.is_displayed()
         if gameover:
-            return driver.find_elements_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwbd')
+            return driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb')
     except:
         gameover=False
-    mon_moves_we = driver.find_elements_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwbd')
+    mon_moves_we = driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb')
     mon_moves = [move.text for move in mon_moves_we]
     if mon_moves and self.moves:
-        war = self.num_of_moves < len(mon_moves) or self.moves[-1] != mon_moves[-1]
+        cond = self.num_of_moves < len(mon_moves) or self.moves[-1] != mon_moves[-1]
     else:
-        war = self.num_of_moves < len(mon_moves)
-    if war:
-        return mon_moves_we[-1]
+        cond = self.num_of_moves < len(mon_moves)
+    if cond:
+        return mon_moves_we
     else:
         return False
 
@@ -78,7 +78,7 @@ class ChromeBrowser(BrowserInterface):
         #options.add_argument(r"user-data-dir=C:\Users\MJakimiuk\AppData\Local\Google\Chrome\User Data")
         options.add_argument("user-data-dir="+self.user_data_dir)
         self.options = options
-        self.driver = webdriver.Chrome(executable_path=self.web_driver_path,chrome_options=self.options)
+        self.driver = webdriver.Chrome()
         return self.driver
 
 class FirefoxBrowser(BrowserInterface):
@@ -108,7 +108,7 @@ class LichessSite(ChessSiteInterface):
         #driver = webdriver.Chrome(executable_path=chromepath)
         waiter = WebDriverWait(self.driver, 600)
         waiter.until(EC.presence_of_element_located((By.XPATH,'//*[@id="main-wrap"]/main/div[1]/rm6/div[1]')))
-        if self.driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/div[1]/div').get_attribute("class")=='cg-wrap orientation-black manipulable':
+        if self.driver.find_element('xpath','//*[@id="main-wrap"]/main/div[1]/div[1]/div').get_attribute("class")=='cg-wrap orientation-black manipulable':
             self.color = 'black'
         else:
             self.color = 'white'     
@@ -121,17 +121,17 @@ class LichessSite(ChessSiteInterface):
         except:
             gameover=False
         if gameover:
-            color = 'white'
-            return color, moves, gameover
+            return moves, gameover
         else:
             gameover = False
         #waiter.until(EC.presence_of_element_located((By.ID, "logout"))
         #moves = driver.find_elements_by_class_name("move")
         waiter = WebDriverWait(self.driver, 600)
-        move_we = waiter.until(new_move_has_occured(moves))
+        moves_we = waiter.until(new_move_has_occured(moves))
         #moves=copy.deepcopy(moves_d)
         #moves = driver.find_elements_by_class_name("move")
         moves = [move.text for move in moves_we]
+        return moves, gameover
 
 class ChessDotComSite(ChessSiteInterface):
     def __init__(self, driver):
@@ -174,12 +174,13 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessBoardClicker:
-    def __init__(self, debug_mode: bool = True, white_perspective: bool = True, site: str = 'chess.com'):
+    def __init__(self, debug_mode: bool = True, white_perspective: bool = True, click_colours_keys: dict = None, arrow_colours_keys: dict = None):
         self.white_perspective = white_perspective
         self.debug_mode = debug_mode
         self.squares = {}
-        self.site = site
         self.chessboard_contour = None
+        self.click_colours_keys = click_colours_keys
+        self.arrow_colours_keys = arrow_colours_keys
          
 
     def convert_to_chess_notation(self, row_index, column_index, is_white_perspective):
@@ -267,7 +268,7 @@ class ChessBoardClicker:
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
         end_x, end_y = end_square['center']        
-        keys = self.arrow_colours_keys[self.site][colour]
+        keys = self.arrow_colours_keys[colour]
         if keys is not None:
             for key in keys:
                 pyautogui.keyDown(key)
@@ -288,7 +289,7 @@ class ChessBoardClicker:
 
 
 class ChessGame:
-    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, engine_options: dict = None, moves: list = []):
+    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, moves: list = []):
         self.color = color_perspective
         if self.color == 'white':
             self.white_perspective = True
@@ -306,28 +307,45 @@ class ChessGame:
         if engine_options:
             for option, value in engine_options.items():
                 self.engine.configure({option: value})
-        self.clicker = ChessBoardClicker(debug_mode=False, white_perspective=self.white_perspective)
+        self.site = site_interface
         self.Browser = browser_interface
+        self.clicker = ChessBoardClicker(debug_mode=True, white_perspective=self.white_perspective, click_colours_keys=self.site.click_colours_keys, arrow_colours_keys=self.site.arrow_colours_keys)
 
     def make_move(self, move):
         self.board.push_san(move)
         self.moves.append(move)
         return self.board
     
+    def compare_moves_list(self, moves):
+        board_moves = self.board.move_stack
+        if len(moves) != len(board_moves):
+            return False
+        for i,move in enumerate(moves):
+            if move != board_moves[i]:
+                return False
+        return True
+
+    def sync_board(self, moves):  
+        self.board = chess.Board()                
+        for move in moves:
+            self.board.push_san(move)
+        self.moves = moves
+        return self.board
+    
     def find_best_move(self, time_limit: int = 5, multipv: int = 5):
-        info = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit),multipv=multipv)
+        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit),multipv=multipv)
         if multipv == 1:
-            return info
+            return analysis
         best_cp = -1e10
         for i in range(multipv):
             if self.color == 'white':
-                cp = info[i]['score'].white().cp
+                cp = analysis[i]['score'].white().cp
             else:
-                cp = info[i]['score'].black().cp
+                cp = analysis[i]['score'].black().cp
             if cp > best_cp:
                 best_cp = cp
-                best_score = info[i]
-        return best_score
+                best_variant = analysis[i]
+        return best_variant
 
 def main():
     browser_choice = 'chrome'
@@ -342,26 +360,24 @@ def main():
         "MinibatchSize": "1",
         "MaxPrefetch": "4"
     }
-    browser = Factory.create_browser(browser_choice)
+    browser = Factory.create_browser(browser_choice, user_data_dir, browser_driver_path)
     driver = browser.configure_browser()
-    site = LichessSite(driver)
+    site = Factory.create_chess_site(site_choice, driver)
     color, driver = site.open_board()
-    game = ChessGame(color, engine_path, browser, engine_options=engine_options)
+    game = ChessGame(color, engine_path, browser, site, engine_options=engine_options)
     game.clicker.get_squares()
     moves = []
     while not game.gameover:
-        color, moves, gameover = site.wait_for_move(moves)
+        moves, gameover = site.wait_for_move(moves)
         if gameover:
             game.gameover = True
             break
-        if color == 'white':
-            move = game.find_best_move(time_limit=5, multipv=1)['pv'][0]
-            game.make_move(move)
-            game.clicker.make_move(move[:2], move[2:])
-            logging.info(f'White played: {move}')
-            logging.info(f'FEN: {game.board.fen()}')
-        else:
-            pass
+        game.sync_board(moves)
+        analysis = game.find_best_move(time_limit=5, multipv=1)
+        move_to_draw = analysis[0]['pv'][0]
+        game.clicker.draw_arrow(move_to_draw.uci()[:2], move_to_draw.uci()[2:],colour='green')
+        logging.info(f'FEN: {game.board.fen()}')
+        logging.info(f'Sugessted move: {move_to_draw.uci()}')       
     driver.quit()
 
 

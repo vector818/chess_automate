@@ -2177,3 +2177,154 @@
 2024-07-21 14:56:29,127 WARNING <UciProtocol (pid=16964)>: stderr >> GPU clock frequency: 1770 MHz
 2024-07-21 14:56:29,128 WARNING <UciProtocol (pid=16964)>: stderr >> GPU compute capability: 7.5
 2024-07-21 14:56:29,128 WARNING <UciProtocol (pid=16964)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 19:48:00,453 WARNING <UciProtocol (pid=28416)>: stderr >>        _
+2024-07-22 19:48:00,455 WARNING <UciProtocol (pid=28416)>: stderr >> |   _ | |
+2024-07-22 19:48:00,456 WARNING <UciProtocol (pid=28416)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 19:52:01,543 WARNING <UciProtocol (pid=20132)>: stderr >>        _
+2024-07-22 19:52:01,544 WARNING <UciProtocol (pid=20132)>: stderr >> |   _ | |
+2024-07-22 19:52:01,545 WARNING <UciProtocol (pid=20132)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 19:53:22,075 WARNING <UciProtocol (pid=26900)>: stderr >>        _
+2024-07-22 19:53:22,076 WARNING <UciProtocol (pid=26900)>: stderr >> |   _ | |
+2024-07-22 19:53:22,076 WARNING <UciProtocol (pid=26900)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:00:12,449 WARNING <UciProtocol (pid=22968)>: stderr >>        _
+2024-07-22 20:00:12,450 WARNING <UciProtocol (pid=22968)>: stderr >> |   _ | |
+2024-07-22 20:00:12,450 WARNING <UciProtocol (pid=22968)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:14:09,978 WARNING <UciProtocol (pid=32116)>: stderr >>        _
+2024-07-22 20:14:09,979 WARNING <UciProtocol (pid=32116)>: stderr >> |   _ | |
+2024-07-22 20:14:09,979 WARNING <UciProtocol (pid=32116)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:26:47,683 WARNING <UciProtocol (pid=29024)>: stderr >>        _
+2024-07-22 20:26:47,684 WARNING <UciProtocol (pid=29024)>: stderr >> |   _ | |
+2024-07-22 20:26:47,684 WARNING <UciProtocol (pid=29024)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:27:37,480 WARNING <UciProtocol (pid=26344)>: stderr >>        _
+2024-07-22 20:27:37,480 WARNING <UciProtocol (pid=26344)>: stderr >> |   _ | |
+2024-07-22 20:27:37,481 WARNING <UciProtocol (pid=26344)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:32:53,919 WARNING <UciProtocol (pid=8948)>: stderr >>        _
+2024-07-22 20:32:53,921 WARNING <UciProtocol (pid=8948)>: stderr >> |   _ | |
+2024-07-22 20:32:53,921 WARNING <UciProtocol (pid=8948)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:34:25,073 WARNING <UciProtocol (pid=8948)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-22 20:34:25,096 WARNING <UciProtocol (pid=8948)>: stderr >> Creating backend [cuda-auto]...
+2024-07-22 20:34:25,121 WARNING <UciProtocol (pid=8948)>: stderr >> Switching to [cuda-fp16]...
+2024-07-22 20:34:25,124 WARNING <UciProtocol (pid=8948)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-22 20:34:25,124 WARNING <UciProtocol (pid=8948)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-22 20:34:25,125 WARNING <UciProtocol (pid=8948)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-22 20:34:25,125 WARNING <UciProtocol (pid=8948)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-22 20:34:25,126 WARNING <UciProtocol (pid=8948)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-22 20:34:25,126 WARNING <UciProtocol (pid=8948)>: stderr >> GPU compute capability: 7.5
+2024-07-22 20:34:25,126 WARNING <UciProtocol (pid=8948)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 20:35:01,100 WARNING <UciProtocol (pid=1264)>: stderr >>        _
+2024-07-22 20:35:01,102 WARNING <UciProtocol (pid=1264)>: stderr >> |   _ | |
+2024-07-22 20:35:01,102 WARNING <UciProtocol (pid=1264)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:35:34,569 WARNING <UciProtocol (pid=1264)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-22 20:35:34,577 WARNING <UciProtocol (pid=1264)>: stderr >> Creating backend [cuda-auto]...
+2024-07-22 20:35:34,592 WARNING <UciProtocol (pid=1264)>: stderr >> Switching to [cuda-fp16]...
+2024-07-22 20:35:34,594 WARNING <UciProtocol (pid=1264)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-22 20:35:34,594 WARNING <UciProtocol (pid=1264)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-22 20:35:34,594 WARNING <UciProtocol (pid=1264)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-22 20:35:34,594 WARNING <UciProtocol (pid=1264)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-22 20:35:34,594 WARNING <UciProtocol (pid=1264)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-22 20:35:34,594 WARNING <UciProtocol (pid=1264)>: stderr >> GPU compute capability: 7.5
+2024-07-22 20:35:34,595 WARNING <UciProtocol (pid=1264)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 20:38:04,643 WARNING <UciProtocol (pid=13240)>: stderr >>        _
+2024-07-22 20:38:04,644 WARNING <UciProtocol (pid=13240)>: stderr >> |   _ | |
+2024-07-22 20:38:04,645 WARNING <UciProtocol (pid=13240)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:38:13,301 WARNING <UciProtocol (pid=13240)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-22 20:38:13,310 WARNING <UciProtocol (pid=13240)>: stderr >> Creating backend [cuda-auto]...
+2024-07-22 20:38:13,324 WARNING <UciProtocol (pid=13240)>: stderr >> Switching to [cuda-fp16]...
+2024-07-22 20:38:13,325 WARNING <UciProtocol (pid=13240)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-22 20:38:13,325 WARNING <UciProtocol (pid=13240)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-22 20:38:13,326 WARNING <UciProtocol (pid=13240)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-22 20:38:13,326 WARNING <UciProtocol (pid=13240)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-22 20:38:13,326 WARNING <UciProtocol (pid=13240)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-22 20:38:13,327 WARNING <UciProtocol (pid=13240)>: stderr >> GPU compute capability: 7.5
+2024-07-22 20:38:13,327 WARNING <UciProtocol (pid=13240)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 20:47:06,148 WARNING <UciProtocol (pid=24772)>: stderr >>        _
+2024-07-22 20:47:06,149 WARNING <UciProtocol (pid=24772)>: stderr >> |   _ | |
+2024-07-22 20:47:06,149 WARNING <UciProtocol (pid=24772)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:47:16,953 WARNING <UciProtocol (pid=24772)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-22 20:47:16,961 WARNING <UciProtocol (pid=24772)>: stderr >> Creating backend [cuda-auto]...
+2024-07-22 20:47:16,976 WARNING <UciProtocol (pid=24772)>: stderr >> Switching to [cuda-fp16]...
+2024-07-22 20:47:16,977 WARNING <UciProtocol (pid=24772)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-22 20:47:16,977 WARNING <UciProtocol (pid=24772)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-22 20:47:16,979 WARNING <UciProtocol (pid=24772)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-22 20:47:16,979 WARNING <UciProtocol (pid=24772)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-22 20:47:16,979 WARNING <UciProtocol (pid=24772)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-22 20:47:16,980 WARNING <UciProtocol (pid=24772)>: stderr >> GPU compute capability: 7.5
+2024-07-22 20:47:16,980 WARNING <UciProtocol (pid=24772)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 20:53:15,116 WARNING <UciProtocol (pid=13568)>: stderr >>        _
+2024-07-22 20:53:15,116 WARNING <UciProtocol (pid=13568)>: stderr >> |   _ | |
+2024-07-22 20:53:15,117 WARNING <UciProtocol (pid=13568)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:53:34,389 WARNING <UciProtocol (pid=13568)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-22 20:53:34,398 WARNING <UciProtocol (pid=13568)>: stderr >> Creating backend [cuda-auto]...
+2024-07-22 20:53:34,415 WARNING <UciProtocol (pid=13568)>: stderr >> Switching to [cuda-fp16]...
+2024-07-22 20:53:34,418 WARNING <UciProtocol (pid=13568)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-22 20:53:34,418 WARNING <UciProtocol (pid=13568)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-22 20:53:34,418 WARNING <UciProtocol (pid=13568)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-22 20:53:34,418 WARNING <UciProtocol (pid=13568)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-22 20:53:34,418 WARNING <UciProtocol (pid=13568)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-22 20:53:34,419 WARNING <UciProtocol (pid=13568)>: stderr >> GPU compute capability: 7.5
+2024-07-22 20:53:34,419 WARNING <UciProtocol (pid=13568)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 20:57:26,281 WARNING <UciProtocol (pid=28192)>: stderr >>        _
+2024-07-22 20:57:26,282 WARNING <UciProtocol (pid=28192)>: stderr >> |   _ | |
+2024-07-22 20:57:26,282 WARNING <UciProtocol (pid=28192)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-22 20:57:34,247 WARNING <UciProtocol (pid=28192)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-22 20:57:34,257 WARNING <UciProtocol (pid=28192)>: stderr >> Creating backend [cuda-auto]...
+2024-07-22 20:57:34,273 WARNING <UciProtocol (pid=28192)>: stderr >> Switching to [cuda-fp16]...
+2024-07-22 20:57:34,275 WARNING <UciProtocol (pid=28192)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-22 20:57:34,276 WARNING <UciProtocol (pid=28192)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-22 20:57:34,276 WARNING <UciProtocol (pid=28192)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-22 20:57:34,277 WARNING <UciProtocol (pid=28192)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-22 20:57:34,277 WARNING <UciProtocol (pid=28192)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-22 20:57:34,277 WARNING <UciProtocol (pid=28192)>: stderr >> GPU compute capability: 7.5
+2024-07-22 20:57:34,277 WARNING <UciProtocol (pid=28192)>: stderr >> L2 cache capacity: 4194304
+2024-07-22 20:57:56,525 INFO FEN: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-22 20:57:56,526 INFO Sugessted move: c7c5
+2024-07-22 20:58:10,429 INFO FEN: rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
+2024-07-22 20:58:10,429 INFO Sugessted move: b8c6
+2024-07-22 20:58:27,436 INFO FEN: r1bqkbnr/pp1ppppp/2n5/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3
+2024-07-22 20:58:27,436 INFO Sugessted move: d2d4
+2024-07-22 20:58:31,311 INFO FEN: r1bqkbnr/pp1ppppp/2n5/2p5/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3
+2024-07-22 20:58:31,312 INFO Sugessted move: e7e6
+2024-07-22 20:58:39,277 INFO FEN: r1bqkbnr/pp1p1ppp/2n1p3/2p5/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4
+2024-07-22 20:58:39,277 INFO Sugessted move: e1g1
+2024-07-22 20:58:44,031 INFO FEN: r1bqkbnr/pp1p1ppp/2n1p3/2p5/2B1P3/2N2N2/PPPP1PPP/R1BQK2R b KQkq - 1 4
+2024-07-22 20:58:44,031 INFO Sugessted move: a7a6
+2024-07-22 20:58:51,296 INFO FEN: r1bqkbnr/1p1p1ppp/p1n1p3/2p5/2B1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 0 5
+2024-07-22 20:58:51,296 INFO Sugessted move: a2a4
+2024-07-22 20:58:56,461 INFO FEN: r1bqkbnr/1p1p1ppp/p1n1p3/2p5/2B1P3/2NP1N2/PPP2PPP/R1BQK2R b KQkq - 0 5
+2024-07-22 20:58:56,461 INFO Sugessted move: d8c7
+2024-07-22 20:59:03,619 INFO FEN: r1b1kbnr/1pqp1ppp/p1n1p3/2p5/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 1 6
+2024-07-22 20:59:03,619 INFO Sugessted move: a2a4
+2024-07-22 20:59:07,815 INFO FEN: r1b1kbnr/1pqp1ppp/p1n1p3/2p5/P1B1P3/2NP1N2/1PP2PPP/R1BQK2R b KQkq - 0 6
+2024-07-22 20:59:07,816 INFO Sugessted move: g8f6
+2024-07-22 20:59:13,791 INFO FEN: r1b1kb1r/1pqp1ppp/p1n1pn2/2p5/P1B1P3/2NP1N2/1PP2PPP/R1BQK2R w KQkq - 1 7
+2024-07-22 20:59:13,791 INFO Sugessted move: e1g1
+2024-07-22 20:59:18,994 INFO FEN: r1b1kb1r/1pqp1ppp/p1n1pn2/2p5/P1B1P3/2NPBN2/1PP2PPP/R2QK2R b KQkq - 2 7
+2024-07-22 20:59:18,994 INFO Sugessted move: b7b6
+2024-07-22 20:59:25,923 INFO FEN: r1b1kb1r/2qp1ppp/ppn1pn2/2p5/P1B1P3/2NPBN2/1PP2PPP/R2QK2R w KQkq - 0 8
+2024-07-22 20:59:25,924 INFO Sugessted move: d1d2
+2024-07-22 20:59:29,706 INFO FEN: r1b1kb1r/2qp1ppp/ppn1pn2/2p5/P1B1P3/2NPBNP1/1PP2P1P/R2QK2R b KQkq - 0 8
+2024-07-22 20:59:29,706 INFO Sugessted move: c8b7
+2024-07-22 20:59:38,950 INFO FEN: r3kb1r/1bqp1ppp/ppn1pn2/2p5/P1B1P3/2NPBNP1/1PP2P1P/R2QK2R w KQkq - 1 9
+2024-07-22 20:59:38,950 INFO Sugessted move: e1g1
+2024-07-22 20:59:43,174 INFO FEN: r3kb1r/1bqp1ppp/ppn1pn2/2p5/P1B1P2P/2NPBNP1/1PP2P2/R2QK2R b KQkq - 0 9
+2024-07-22 20:59:43,174 INFO Sugessted move: e8c8
+2024-07-22 20:59:50,012 INFO FEN: 2kr1b1r/1bqp1ppp/ppn1pn2/2p5/P1B1P2P/2NPBNP1/1PP2P2/R2QK2R w KQ - 1 10
+2024-07-22 20:59:50,012 INFO Sugessted move: e3f4
+2024-07-22 20:59:53,539 INFO FEN: 2kr1b1r/1bqp1ppp/ppn1pn2/2p5/P1B1P2P/2NPBNP1/1PP2P2/R2Q1K1R b - - 2 10
+2024-07-22 20:59:53,539 INFO Sugessted move: d7d5
+2024-07-22 20:59:58,098 INFO FEN: 2kr1b1r/1bq2ppp/ppn1pn2/2pp4/P1B1P2P/2NPBNP1/1PP2P2/R2Q1K1R w - - 0 11
+2024-07-22 20:59:58,098 INFO Sugessted move: e4d5
+2024-07-22 21:00:01,528 INFO FEN: 2kr1b1r/1bq2ppp/ppn1pn2/P1pp4/2B1P2P/2NPBNP1/1PP2P2/R2Q1K1R b - - 0 11
+2024-07-22 21:00:01,528 INFO Sugessted move: d5c4
+2024-07-22 21:00:05,191 INFO FEN: 2kr1b1r/1bq2ppp/ppn1pn2/P1p5/2p1P2P/2NPBNP1/1PP2P2/R2Q1K1R w - - 0 12
+2024-07-22 21:00:05,191 INFO Sugessted move: a5b6
+2024-07-22 21:00:12,181 INFO FEN: 2kr1b1r/1bq2ppp/ppn1pn2/P1p1P3/2p4P/2NPBNP1/1PP2P2/R2Q1K1R b - - 0 12
+2024-07-22 21:00:12,181 INFO Sugessted move: f6g4
+2024-07-22 21:00:18,096 INFO FEN: 2kr1b1r/1bq2ppp/ppn1p3/P1p1P3/2p3nP/2NPBNP1/1PP2P2/R2Q1K1R w - - 1 13
+2024-07-22 21:00:18,096 INFO Sugessted move: a5b6
+2024-07-22 21:00:22,723 INFO FEN: 2kr1b1r/1bq2ppp/ppn1p3/P1p1P3/2p2BnP/2NP1NP1/1PP2P2/R2Q1K1R b - - 2 13
+2024-07-22 21:00:22,723 INFO Sugessted move: c4d3
+2024-07-22 21:00:28,253 INFO FEN: 2kr1b1r/1bq2ppp/ppn1p3/P1p1P3/5BnP/2Np1NP1/1PP2P2/R2Q1K1R w - - 0 14
+2024-07-22 21:00:28,253 INFO Sugessted move: a5b6
+2024-07-22 21:00:31,665 INFO FEN: 2kr1b1r/1bq2ppp/ppn1p3/P1p1P3/5BnP/2NP1NP1/1P3P2/R2Q1K1R b - - 0 14
+2024-07-22 21:00:31,666 INFO Sugessted move: c6b4
