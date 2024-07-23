@@ -65,6 +65,10 @@ class ChessSiteInterface(ABC):
     
     @abstractmethod
     def open_board(self):
+        pass
+
+    @abstractmethod
+    def promote_pawn(self, promotion_piece):
         pass        
 
 class ChromeBrowser(BrowserInterface):
@@ -113,6 +117,12 @@ class LichessSite(ChessSiteInterface):
         else:
             self.color = 'white'     
         return self.color, self.driver
+    
+    def promote_pawn(self, promotion_piece):        
+        promotion_order = ['q','n','r','b']
+        promotion_no = promotion_order.index(promotion_piece)+1
+        promotion_xpath = f'//*[@id="promotion-choice"]/square[{promotion_no}]'
+        self.driver.find_element('xpath',promotion_xpath).click()
     
     def wait_for_move(self, moves):
         try:
@@ -174,14 +184,15 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessBoardClicker:
-    def __init__(self, debug_mode: bool = True, white_perspective: bool = True, click_colours_keys: dict = None, arrow_colours_keys: dict = None):
+    def __init__(self, driver: webdriver, site_interface: ChessSiteInterface, debug_mode: bool = True, white_perspective: bool = True, click_colours_keys: dict = None, arrow_colours_keys: dict = None, ):
         self.white_perspective = white_perspective
         self.debug_mode = debug_mode
         self.squares = {}
         self.chessboard_contour = None
         self.click_colours_keys = click_colours_keys
         self.arrow_colours_keys = arrow_colours_keys
-         
+        self.driver = driver
+        self.site_interface = site_interface         
 
     def convert_to_chess_notation(self, row_index, column_index, is_white_perspective):
         column_letters = 'abcdefgh' if is_white_perspective else 'hgfedcba'
@@ -263,7 +274,11 @@ class ChessBoardClicker:
             for key in keys:
                 pyautogui.keyUp(key)
 
-    def draw_arrow(self, start_square, end_square, speed: float = 0.3, colour: str = 'red'):
+    def draw_arrow(self, move_uci: str, speed: float = 0.2, colour: str = 'red'):
+        start_square = move_uci[:2]
+        end_square = move_uci[2:4]
+        if len(move_uci) > 4:
+            promotion_piece = move_uci[4]
         start_square = self.squares[start_square]
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
@@ -278,29 +293,38 @@ class ChessBoardClicker:
         if keys is not None:
             for key in keys:
                 pyautogui.keyUp(key)
+        logging.info(f"Promote to {promotion_piece}")
     
-    def make_move(self, start_square, end_square, speed: float = 0.3):
+    def make_move(self, move_uci: str, move_speed: float = 0.1, drag_speed: float = 0.2):
+        start_square = move_uci[:2]
+        end_square = move_uci[2:4]
+        promotion_piece = None
+        if len(move_uci) > 4:
+            promotion_piece = move_uci[4]
         start_square = self.squares[start_square]
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
         end_x, end_y = end_square['center']
-        pyautogui.moveTo(start_x, start_y, duration=speed)
-        pyautogui.dragTo(end_x, end_y, duration=speed, button='left')
+        pyautogui.moveTo(start_x, start_y, duration=move_speed)
+        pyautogui.dragTo(end_x, end_y, duration=drag_speed, button='left')
+        if promotion_piece is not None:
+            try:
+                self.site_interface.promote_pawn(promotion_piece)
+            except Exception as e:
+                logging.error(e)
 
 
 class ChessGame:
-    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, moves: list = []):
+    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, start_postion: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
         self.color = color_perspective
         if self.color == 'white':
             self.white_perspective = True
         else:
             self.white_perspective = False
-        self.moves = moves
+        self.moves = []
         self.gameover = False
-        self.board = chess.Board()
-        if moves:
-            for move in moves:
-                self.board.push_san(move)
+        self.board = chess.Board(fen=start_postion)
+        self.start_position = start_postion
         self.engine_path = engine_path
         self.engine_options = engine_options
         self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
@@ -308,11 +332,11 @@ class ChessGame:
             for option, value in engine_options.items():
                 self.engine.configure({option: value})
         self.site = site_interface
-        self.Browser = browser_interface
-        self.clicker = ChessBoardClicker(debug_mode=True, white_perspective=self.white_perspective, click_colours_keys=self.site.click_colours_keys, arrow_colours_keys=self.site.arrow_colours_keys)
+        self.browser = browser_interface
+        self.clicker = ChessBoardClicker(debug_mode=True, white_perspective=self.white_perspective, click_colours_keys=self.site.click_colours_keys, arrow_colours_keys=self.site.arrow_colours_keys, driver=self.browser.driver, site_interface=self.site)
 
     def make_move(self, move):
-        self.board.push_san(move)
+        self.board.push_uci(move)
         self.moves.append(move)
         return self.board
     
@@ -326,7 +350,7 @@ class ChessGame:
         return True
 
     def sync_board(self, moves):  
-        self.board = chess.Board()                
+        self.board = chess.Board(fen=self.start_position)               
         for move in moves:
             self.board.push_san(move)
         self.moves = moves
@@ -364,20 +388,26 @@ def main():
     driver = browser.configure_browser()
     site = Factory.create_chess_site(site_choice, driver)
     color, driver = site.open_board()
-    game = ChessGame(color, engine_path, browser, site, engine_options=engine_options)
+    game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_postion='7K/8/8/8/8/8/pk6/8 w - - 0 1')
     game.clicker.get_squares()
     moves = []
     while not game.gameover:
-        moves, gameover = site.wait_for_move(moves)
+        on_move = 'white' if game.board.turn else 'black'
+        if on_move != game.color:
+            moves, gameover = site.wait_for_move(moves)
         if gameover:
             game.gameover = True
-            break
+            break                
         game.sync_board(moves)
+        if on_move != game.color:
+            continue
         analysis = game.find_best_move(time_limit=5, multipv=1)
         move_to_draw = analysis[0]['pv'][0]
-        game.clicker.draw_arrow(move_to_draw.uci()[:2], move_to_draw.uci()[2:],colour='green')
+        game.clicker.make_move(move_to_draw.uci())
+        game.make_move(move_to_draw.uci())
         logging.info(f'FEN: {game.board.fen()}')
-        logging.info(f'Sugessted move: {move_to_draw.uci()}')       
+        logging.info(f'Sugessted move: {move_to_draw.uci()}')
+        logging.info(f"Score evaluation: {analysis[0]['score']}")       
     driver.quit()
 
 

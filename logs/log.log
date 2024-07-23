@@ -2328,3 +2328,778 @@
 2024-07-22 21:00:28,253 INFO Sugessted move: a5b6
 2024-07-22 21:00:31,665 INFO FEN: 2kr1b1r/1bq2ppp/ppn1p3/P1p1P3/5BnP/2NP1NP1/1P3P2/R2Q1K1R b - - 0 14
 2024-07-22 21:00:31,666 INFO Sugessted move: c6b4
+2024-07-23 18:18:01,642 WARNING <UciProtocol (pid=30028)>: stderr >>        _
+2024-07-23 18:18:01,643 WARNING <UciProtocol (pid=30028)>: stderr >> |   _ | |
+2024-07-23 18:18:01,643 WARNING <UciProtocol (pid=30028)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:21:34,102 WARNING <UciProtocol (pid=30028)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:21:34,112 WARNING <UciProtocol (pid=30028)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:21:34,129 WARNING <UciProtocol (pid=30028)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:21:34,131 WARNING <UciProtocol (pid=30028)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:21:34,132 WARNING <UciProtocol (pid=30028)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:21:34,132 WARNING <UciProtocol (pid=30028)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:21:34,134 WARNING <UciProtocol (pid=30028)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:21:34,134 WARNING <UciProtocol (pid=30028)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:21:34,134 WARNING <UciProtocol (pid=30028)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:21:34,134 WARNING <UciProtocol (pid=30028)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:33:09,302 WARNING <UciProtocol (pid=29216)>: stderr >>        _
+2024-07-23 18:33:09,304 WARNING <UciProtocol (pid=29216)>: stderr >> |   _ | |
+2024-07-23 18:33:09,305 WARNING <UciProtocol (pid=29216)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:33:13,986 WARNING <UciProtocol (pid=29216)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:33:14,005 WARNING <UciProtocol (pid=29216)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:33:14,028 WARNING <UciProtocol (pid=29216)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:33:14,031 WARNING <UciProtocol (pid=29216)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:33:14,031 WARNING <UciProtocol (pid=29216)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:33:14,031 WARNING <UciProtocol (pid=29216)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:33:14,031 WARNING <UciProtocol (pid=29216)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:33:14,032 WARNING <UciProtocol (pid=29216)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:33:14,032 WARNING <UciProtocol (pid=29216)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:33:14,032 WARNING <UciProtocol (pid=29216)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:33:19,666 INFO FEN: rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:33:19,667 INFO Sugessted move: g8f6
+2024-07-23 18:36:02,090 WARNING <UciProtocol (pid=37024)>: stderr >>        _
+2024-07-23 18:36:02,091 WARNING <UciProtocol (pid=37024)>: stderr >> |   _ | |
+2024-07-23 18:36:02,092 WARNING <UciProtocol (pid=37024)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:42:43,357 WARNING <UciProtocol (pid=1988)>: stderr >>        _
+2024-07-23 18:42:43,358 WARNING <UciProtocol (pid=1988)>: stderr >> |   _ | |
+2024-07-23 18:42:43,358 WARNING <UciProtocol (pid=1988)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:43:07,932 WARNING <UciProtocol (pid=29128)>: stderr >>        _
+2024-07-23 18:43:07,933 WARNING <UciProtocol (pid=29128)>: stderr >> |   _ | |
+2024-07-23 18:43:07,934 WARNING <UciProtocol (pid=29128)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:43:10,110 WARNING <UciProtocol (pid=29128)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:43:10,133 WARNING <UciProtocol (pid=29128)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:43:10,158 WARNING <UciProtocol (pid=29128)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:43:10,166 WARNING <UciProtocol (pid=29128)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:43:10,167 WARNING <UciProtocol (pid=29128)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:43:10,167 WARNING <UciProtocol (pid=29128)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:43:10,167 WARNING <UciProtocol (pid=29128)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:43:10,169 WARNING <UciProtocol (pid=29128)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:43:10,169 WARNING <UciProtocol (pid=29128)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:43:10,169 WARNING <UciProtocol (pid=29128)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:43:15,685 INFO FEN: rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:43:15,686 INFO Sugessted move: g7g6
+2024-07-23 18:43:19,777 INFO FEN: rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:43:19,778 INFO Sugessted move: g7g6
+2024-07-23 18:43:23,491 INFO FEN: rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:43:23,492 INFO Sugessted move: g7g6
+2024-07-23 18:43:26,903 INFO FEN: rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:43:26,904 INFO Sugessted move: g7g6
+2024-07-23 18:43:29,795 INFO FEN: rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:43:29,795 INFO Sugessted move: g7g6
+2024-07-23 18:43:32,894 INFO FEN: rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1
+2024-07-23 18:43:32,894 INFO Sugessted move: g7g6
+2024-07-23 18:46:36,419 WARNING <UciProtocol (pid=24568)>: stderr >>        _
+2024-07-23 18:46:36,420 WARNING <UciProtocol (pid=24568)>: stderr >> |   _ | |
+2024-07-23 18:46:36,420 WARNING <UciProtocol (pid=24568)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:46:38,570 WARNING <UciProtocol (pid=24568)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:46:38,578 WARNING <UciProtocol (pid=24568)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:46:38,594 WARNING <UciProtocol (pid=24568)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:46:38,596 WARNING <UciProtocol (pid=24568)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:46:38,596 WARNING <UciProtocol (pid=24568)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:46:38,596 WARNING <UciProtocol (pid=24568)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:46:38,596 WARNING <UciProtocol (pid=24568)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:46:38,597 WARNING <UciProtocol (pid=24568)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:46:38,597 WARNING <UciProtocol (pid=24568)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:46:38,597 WARNING <UciProtocol (pid=24568)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:47:11,909 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:47:11,909 INFO Sugessted move: g8f6
+2024-07-23 18:47:15,963 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:47:15,964 INFO Sugessted move: g8f6
+2024-07-23 18:47:19,419 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:47:19,420 INFO Sugessted move: g8f6
+2024-07-23 18:47:22,332 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:47:22,333 INFO Sugessted move: g8f6
+2024-07-23 18:47:24,609 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:47:24,609 INFO Sugessted move: g8f6
+2024-07-23 18:47:26,575 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:47:26,576 INFO Sugessted move: g8f6
+2024-07-23 18:48:16,129 WARNING <UciProtocol (pid=28832)>: stderr >>        _
+2024-07-23 18:48:16,130 WARNING <UciProtocol (pid=28832)>: stderr >> |   _ | |
+2024-07-23 18:48:16,130 WARNING <UciProtocol (pid=28832)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:48:18,279 WARNING <UciProtocol (pid=28832)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:48:18,289 WARNING <UciProtocol (pid=28832)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:48:18,305 WARNING <UciProtocol (pid=28832)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:48:18,306 WARNING <UciProtocol (pid=28832)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:48:18,307 WARNING <UciProtocol (pid=28832)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:48:18,307 WARNING <UciProtocol (pid=28832)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:48:18,307 WARNING <UciProtocol (pid=28832)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:48:18,307 WARNING <UciProtocol (pid=28832)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:48:18,308 WARNING <UciProtocol (pid=28832)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:48:18,308 WARNING <UciProtocol (pid=28832)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:48:23,417 INFO FEN: rnbqkb1r/pppppppp/5n2/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2
+2024-07-23 18:48:23,417 INFO Sugessted move: g8f6
+2024-07-23 18:48:27,943 INFO FEN: rnbqkb1r/pppppp1p/5np1/8/8/5NP1/PPPPPP1P/RNBQKB1R w KQkq - 0 3
+2024-07-23 18:48:27,943 INFO Sugessted move: g7g6
+2024-07-23 18:48:32,305 INFO FEN: rnbqk2r/ppppppbp/5np1/8/8/5NP1/PPPPPPBP/RNBQK2R w KQkq - 2 4
+2024-07-23 18:48:32,306 INFO Sugessted move: f8g7
+2024-07-23 18:48:38,348 INFO FEN: rnbq1rk1/ppppppbp/5np1/8/3P4/5NP1/PPP1PPBP/RNBQK2R w KQ - 1 5
+2024-07-23 18:48:38,349 INFO Sugessted move: e8g8
+2024-07-23 18:48:41,118 INFO FEN: rnbq1rk1/ppppppbp/5np1/8/3P4/5NP1/PPP1PPBP/RNBQK2R w KQ - 1 5
+2024-07-23 18:48:41,119 INFO Sugessted move: e8g8
+2024-07-23 18:48:45,195 INFO FEN: rnbq1rk1/ppp1ppbp/3p1np1/8/2PP4/5NP1/PP2PPBP/RNBQK2R w KQ - 0 6
+2024-07-23 18:48:45,196 INFO Sugessted move: d7d6
+2024-07-23 18:48:53,647 INFO FEN: r1bq1rk1/pppnppbp/3p1np1/8/2PP4/5NP1/PP2PPBP/RNBQ1RK1 w - - 2 7
+2024-07-23 18:48:53,648 INFO Sugessted move: b8d7
+2024-07-23 18:49:02,398 INFO FEN: r1bq1rk1/pppnppb1/3p1npp/6B1/2PP4/5NP1/PP2PPBP/RN1Q1RK1 w - - 0 8
+2024-07-23 18:49:02,398 INFO Sugessted move: h7h6
+2024-07-23 18:49:10,444 INFO FEN: r1bq1rk1/ppp1ppb1/3p1npp/8/2PP4/5NP1/PP2PPBP/RN1Q1RK1 w - - 0 9
+2024-07-23 18:49:10,444 INFO Sugessted move: d7f6
+2024-07-23 18:49:12,503 INFO FEN: r1bq1rk1/ppp1ppb1/3p1npp/8/2PP4/5NP1/PP2PPBP/RN1Q1RK1 w - - 0 9
+2024-07-23 18:49:12,504 INFO Sugessted move: d7f6
+2024-07-23 18:49:16,028 INFO FEN: r1bq1rk1/pp2ppb1/2pp1npp/8/2PP4/4PNP1/PP3PBP/RN1Q1RK1 w - - 0 10
+2024-07-23 18:49:16,029 INFO Sugessted move: c7c6
+2024-07-23 18:49:24,608 INFO FEN: r1b2rk1/pp2ppb1/2pp1npp/q7/2PP4/N3PNP1/PP3PBP/R2Q1RK1 w - - 2 11
+2024-07-23 18:49:24,609 INFO Sugessted move: d8a5
+2024-07-23 18:49:27,568 INFO FEN: r1b2rk1/pp2ppb1/2pp1npp/q7/2PP4/N3PNP1/PP3PBP/R2Q1RK1 w - - 2 11
+2024-07-23 18:49:27,568 INFO Sugessted move: d8a5
+2024-07-23 18:49:32,540 INFO FEN: r1b2rk1/pp2ppb1/2pp1npp/7q/2PP4/N3PNP1/PP1Q1PBP/R4RK1 w - - 4 12
+2024-07-23 18:49:32,540 INFO Sugessted move: a5h5
+2024-07-23 18:49:40,507 INFO FEN: r4rk1/pp2ppb1/2pp1npp/7q/2PP2b1/N3PNP1/PP3PBP/R2Q1RK1 w - - 6 13
+2024-07-23 18:49:40,508 INFO Sugessted move: c8g4
+2024-07-23 18:49:47,184 INFO FEN: r4rk1/pp3pb1/2pp1npp/4p2q/2PP2b1/N3PNP1/PP3PBP/2RQ1RK1 w - - 0 14
+2024-07-23 18:49:47,184 INFO Sugessted move: e7e5
+2024-07-23 18:49:50,048 INFO FEN: r4rk1/pp3pb1/2pp1npp/4p2q/2PP2b1/N3PNP1/PP3PBP/2RQ1RK1 w - - 0 14
+2024-07-23 18:49:50,049 INFO Sugessted move: e7e5
+2024-07-23 18:49:54,367 INFO FEN: r4rk1/pp3pb1/2pp1npp/7q/2PPp1b1/4PNP1/PPN2PBP/2RQ1RK1 w - - 0 15
+2024-07-23 18:49:54,367 INFO Sugessted move: e5e4
+2024-07-23 18:49:59,802 INFO FEN: r4rk1/pp3pb1/2pp1npp/2P4q/3P2b1/4PpP1/PPN2PBP/2RQ1RK1 w - - 0 16
+2024-07-23 18:49:59,803 INFO Sugessted move: e4f3
+2024-07-23 18:50:05,486 INFO FEN: r4rk1/pp3pb1/2pp1npp/2P4q/3P4/4PbP1/PPN2P1P/2RQ1RK1 w - - 0 17
+2024-07-23 18:50:05,487 INFO Sugessted move: g4f3
+2024-07-23 18:50:15,419 INFO FEN: r4rk1/pp3pb1/2p2npp/2p4q/3P4/4PbP1/PPNQ1P1P/2R2RK1 w - - 0 18
+2024-07-23 18:50:15,419 INFO Sugessted move: d6c5
+2024-07-23 18:50:20,315 INFO FEN: r4rk1/pp3pb1/2p2npp/2p5/3P4/2Q1PbPq/PPN2P1P/2R2RK1 w - - 2 19
+2024-07-23 18:50:20,316 INFO Sugessted move: h5h3
+2024-07-23 18:50:26,068 INFO FEN: r4rk1/pp3pb1/2p2npp/2p5/3P4/1PQ1PbP1/P1N2PqP/2R2RK1 w - - 1 20
+2024-07-23 18:50:26,068 INFO Sugessted move: h3g2
+2024-07-23 18:51:17,254 WARNING <UciProtocol (pid=15420)>: stderr >>        _
+2024-07-23 18:51:17,255 WARNING <UciProtocol (pid=15420)>: stderr >> |   _ | |
+2024-07-23 18:51:17,255 WARNING <UciProtocol (pid=15420)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:51:19,398 WARNING <UciProtocol (pid=15420)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:51:19,407 WARNING <UciProtocol (pid=15420)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:51:19,423 WARNING <UciProtocol (pid=15420)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:51:19,424 WARNING <UciProtocol (pid=15420)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:51:19,426 WARNING <UciProtocol (pid=15420)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:51:19,426 WARNING <UciProtocol (pid=15420)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:51:19,426 WARNING <UciProtocol (pid=15420)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:51:19,427 WARNING <UciProtocol (pid=15420)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:51:19,427 WARNING <UciProtocol (pid=15420)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:51:19,427 WARNING <UciProtocol (pid=15420)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:51:25,227 INFO FEN: rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2
+2024-07-23 18:51:25,227 INFO Sugessted move: d7d5
+2024-07-23 18:51:31,054 INFO FEN: rnbqkb1r/ppp1pppp/5n2/3P4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 3
+2024-07-23 18:51:31,055 INFO Sugessted move: g8f6
+2024-07-23 18:51:37,814 INFO FEN: rnbqkb1r/pp2pppp/2p2n2/3P4/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 4
+2024-07-23 18:51:37,815 INFO Sugessted move: c7c6
+2024-07-23 18:51:43,419 INFO FEN: r1bqkb1r/pp2pppp/2n2n2/8/3P4/8/PPP2PPP/RNBQKBNR w KQkq - 0 5
+2024-07-23 18:51:43,419 INFO Sugessted move: b8c6
+2024-07-23 18:51:50,374 INFO FEN: r2qkb1r/pp2pppp/2n2n2/8/3P2b1/5N2/PPP2PPP/RNBQKB1R w KQkq - 2 6
+2024-07-23 18:51:50,374 INFO Sugessted move: c8g4
+2024-07-23 18:51:53,101 INFO FEN: r2qkb1r/pp2pppp/2n2n2/8/3P2b1/5N2/PPP2PPP/RNBQKB1R w KQkq - 2 6
+2024-07-23 18:51:53,101 INFO Sugessted move: c8g4
+2024-07-23 18:52:00,423 INFO FEN: r2qkb1r/pp3ppp/2n1pn2/8/3P2b1/2P2N2/PP3PPP/RNBQKB1R w KQkq - 0 7
+2024-07-23 18:52:00,423 INFO Sugessted move: e7e6
+2024-07-23 18:52:06,682 INFO FEN: r2qkb1r/pp3ppp/2n1pn2/7b/3P4/2P2N1P/PP3PP1/RNBQKB1R w KQkq - 1 8
+2024-07-23 18:52:06,683 INFO Sugessted move: g4h5
+2024-07-23 18:52:14,025 INFO FEN: r2qk2r/pp3ppp/2nbpn2/7b/3P4/2PB1N1P/PP3PP1/RNBQK2R w KQkq - 3 9
+2024-07-23 18:52:14,026 INFO Sugessted move: f8d6
+2024-07-23 18:52:24,114 INFO FEN: r2q1rk1/pp3ppp/2nbpn2/7b/3P4/2PB1N1P/PP3PP1/RNBQ1RK1 w - - 5 10
+2024-07-23 18:52:24,114 INFO Sugessted move: e8g8
+2024-07-23 18:52:34,400 INFO FEN: r2q1rk1/pp3ppp/2nb1n2/4p2b/3P4/2PB1N1P/PP3PP1/RNBQR1K1 w - - 0 11
+2024-07-23 18:52:34,400 INFO Sugessted move: e6e5
+2024-07-23 18:52:41,791 INFO FEN: r2q1rk1/pp3ppp/2nb4/4p2b/3P2n1/2PB1N1P/PP3P2/RNBQR1K1 w - - 0 12
+2024-07-23 18:52:41,791 INFO Sugessted move: f6g4
+2024-07-23 18:52:48,452 INFO FEN: r2q1rk1/pp3ppp/2nb4/4p3/3P2b1/2PB1N2/PP3P2/RNBQR1K1 w - - 0 13
+2024-07-23 18:52:48,453 INFO Sugessted move: h5g4
+2024-07-23 18:52:55,599 INFO FEN: r2q1rk1/pp3ppp/3b4/n2Pp3/6b1/2PB1N2/PP3P2/RNBQR1K1 w - - 1 14
+2024-07-23 18:52:55,599 INFO Sugessted move: c6a5
+2024-07-23 18:53:03,145 INFO FEN: r2q1rk1/pp4pp/3b4/n2Ppp2/6b1/2P2N2/PP2BP2/RNBQR1K1 w - - 0 15
+2024-07-23 18:53:03,145 INFO Sugessted move: f7f5
+2024-07-23 18:53:10,419 INFO FEN: r2q1rk1/pp4p1/3b3p/n2PppN1/6b1/2P5/PP2BP2/RNBQR1K1 w - - 0 16
+2024-07-23 18:53:10,419 INFO Sugessted move: h7h6
+2024-07-23 18:53:16,559 INFO FEN: r2q1rk1/pp4p1/3b4/n2Pppp1/6B1/2P5/PP3P2/RNBQR1K1 w - - 0 17
+2024-07-23 18:53:16,560 INFO Sugessted move: h6g5
+2024-07-23 18:53:24,821 INFO FEN: r2q1rk1/pp4p1/3b4/n2P1pp1/4p3/2P5/PP2BP2/RNBQR1K1 w - - 0 18
+2024-07-23 18:53:24,822 INFO Sugessted move: e5e4
+2024-07-23 18:53:34,130 INFO FEN: r4rk1/pp1q2p1/3b4/n2P1pp1/4p3/2P5/PP2BPK1/RNBQR3 w - - 2 19
+2024-07-23 18:53:34,130 INFO Sugessted move: d8d7
+2024-07-23 18:53:42,736 INFO FEN: 4rrk1/pp1q2p1/3b4/n2P1pp1/4p3/2P5/PP1NBPK1/R1BQR3 w - - 4 20
+2024-07-23 18:53:42,737 INFO Sugessted move: a8e8
+2024-07-23 18:53:51,035 INFO FEN: 5rk1/pp1qr1p1/3b4/n2P1ppB/4p3/2P5/PP1N1PK1/R1BQR3 w - - 6 21
+2024-07-23 18:53:51,036 INFO Sugessted move: e8e7
+2024-07-23 18:54:01,499 INFO FEN: 5rk1/ppq1r1p1/3b4/n2P1ppB/1P2p3/2P5/P2N1PK1/R1BQR3 w - - 1 22
+2024-07-23 18:54:01,500 INFO Sugessted move: d7c7
+2024-07-23 18:54:10,364 INFO FEN: 5rk1/pp2r1p1/3b4/P2P1ppB/4p3/2q5/P2N1PK1/R1BQR3 w - - 0 23
+2024-07-23 18:54:10,364 INFO Sugessted move: c7c3
+2024-07-23 18:54:19,181 INFO FEN: 5rk1/pp2r1p1/3b2B1/P2P1p2/4p1p1/2q5/P2N1PK1/R1BQR3 w - - 0 24
+2024-07-23 18:54:19,181 INFO Sugessted move: g5g4
+2024-07-23 18:54:27,313 INFO FEN: 6k1/pp2r1p1/3b1rB1/P2P1p2/4p1p1/2q5/P2N1PK1/R1BQ3R w - - 2 25
+2024-07-23 18:54:27,313 INFO Sugessted move: f8f6
+2024-07-23 18:54:33,565 INFO FEN: 6k1/pp2r1p1/3b1rB1/P2P1p2/4p1p1/8/Pq1N1PK1/R2Q3R w - - 0 26
+2024-07-23 18:54:33,566 INFO Sugessted move: c3b2
+2024-07-23 18:54:37,000 INFO FEN: 7k/pp2r1p1/3b1rB1/P2P1p2/4p1p1/8/Pq1N1PK1/R2Q4 w - - 0 27
+2024-07-23 18:54:37,000 INFO Sugessted move: g8h8
+2024-07-23 18:54:40,489 INFO FEN: 7k/pp2r1p1/5rB1/P2P1p2/4p1p1/8/Pq1N1PKb/R6Q w - - 2 28
+2024-07-23 18:54:40,490 INFO Sugessted move: d6h2
+2024-07-23 18:54:44,030 INFO FEN: 6k1/pp2r1p1/5rB1/P2P1p2/4p1p1/8/Pq1N1PKQ/R7 w - - 1 29
+2024-07-23 18:54:44,031 INFO Sugessted move: h8g8
+2024-07-23 18:54:49,111 INFO FEN: 5k2/pp2r1pQ/5rB1/P2P1p2/4p1p1/8/Pq1N1PK1/R7 w - - 3 30
+2024-07-23 18:54:49,111 INFO Sugessted move: g8f8
+2024-07-23 18:54:52,308 ERROR UciAnalysisCommand failed after returning preliminary result (<Future finished result=<chess.engine...001676C5BEBD0>>)
+protocol: <UciProtocol (pid=15420)>
+transport: <_WindowsSubprocessTransport pid=15420 running stdin=<_ProactorWritePipeTransport fd=1964 read=<_OverlappedFuture pending cb=[_ProactorWritePipeTransport._pipe_closed()]>> stdout=<_ProactorReadPipeTransport fd=1968 read=<_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>> stderr=<_ProactorReadPipeTransport fd=1976 read=<_OverlappedFuture pending cb=[_ProactorReadPipeTransport._loop_reading()]>>>
+Traceback (most recent call last):
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\engine.py", line 1832, in _parse_uci_bestmove
+    move = board.push_uci(tokens[0].lower())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\__init__.py", line 3079, in push_uci
+    move = self.parse_uci(uci)
+           ^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\__init__.py", line 3057, in parse_uci
+    move = Move.from_uci(uci)
+           ^^^^^^^^^^^^^^^^^^
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\__init__.py", line 567, in from_uci
+    raise ValueError(f"invalid uci (use 0000 for null moves): {uci!r}")
+ValueError: invalid uci (use 0000 for null moves): 'a1a1'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\engine.py", line 1279, in _line_received
+    self.line_received(engine, line)
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\engine.py", line 1688, in line_received
+    self._bestmove(engine, line.split(" ", 1)[1])
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\engine.py", line 1711, in _bestmove
+    best = _parse_uci_bestmove(engine.board, arg)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Lib\site-packages\chess\engine.py", line 1834, in _parse_uci_bestmove
+    raise EngineError(err)
+chess.engine.EngineError: invalid uci (use 0000 for null moves): 'a1a1'
+2024-07-23 18:55:48,230 WARNING <UciProtocol (pid=37052)>: stderr >>        _
+2024-07-23 18:55:48,231 WARNING <UciProtocol (pid=37052)>: stderr >> |   _ | |
+2024-07-23 18:55:48,231 WARNING <UciProtocol (pid=37052)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:55:50,384 WARNING <UciProtocol (pid=37052)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:55:50,393 WARNING <UciProtocol (pid=37052)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:55:50,408 WARNING <UciProtocol (pid=37052)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:55:50,410 WARNING <UciProtocol (pid=37052)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:55:50,410 WARNING <UciProtocol (pid=37052)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:55:50,411 WARNING <UciProtocol (pid=37052)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:55:50,411 WARNING <UciProtocol (pid=37052)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:55:50,411 WARNING <UciProtocol (pid=37052)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:55:50,412 WARNING <UciProtocol (pid=37052)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:55:50,412 WARNING <UciProtocol (pid=37052)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:58:15,195 WARNING <UciProtocol (pid=34968)>: stderr >>        _
+2024-07-23 18:58:15,195 WARNING <UciProtocol (pid=34968)>: stderr >> |   _ | |
+2024-07-23 18:58:15,196 WARNING <UciProtocol (pid=34968)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 18:58:16,833 WARNING <UciProtocol (pid=34968)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 18:58:16,841 WARNING <UciProtocol (pid=34968)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 18:58:16,861 WARNING <UciProtocol (pid=34968)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 18:58:16,862 WARNING <UciProtocol (pid=34968)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 18:58:16,862 WARNING <UciProtocol (pid=34968)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 18:58:16,862 WARNING <UciProtocol (pid=34968)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 18:58:16,862 WARNING <UciProtocol (pid=34968)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 18:58:16,863 WARNING <UciProtocol (pid=34968)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 18:58:16,863 WARNING <UciProtocol (pid=34968)>: stderr >> GPU compute capability: 7.5
+2024-07-23 18:58:16,863 WARNING <UciProtocol (pid=34968)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 18:58:22,155 INFO FEN: rnbqkb1r/pppppppp/5n2/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 1 2
+2024-07-23 18:58:22,155 INFO Sugessted move: g8f6
+2024-07-23 18:58:22,155 INFO Score evaluation: PovScore(Cp(-3), BLACK)
+2024-07-23 18:58:28,465 INFO FEN: rnbqkb1r/pppppp1p/5np1/8/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3
+2024-07-23 18:58:28,465 INFO Sugessted move: g7g6
+2024-07-23 18:58:28,466 INFO Score evaluation: PovScore(Cp(-3), BLACK)
+2024-07-23 18:58:33,471 INFO FEN: rnbqk2r/ppppppbp/5np1/8/3P4/5N2/PPPNPPPP/R1BQKB1R w KQkq - 2 4
+2024-07-23 18:58:33,471 INFO Sugessted move: f8g7
+2024-07-23 18:58:33,472 INFO Score evaluation: PovScore(Cp(0), BLACK)
+2024-07-23 18:58:38,758 INFO FEN: rnbqk2r/ppp1ppbp/3p1np1/8/3PP3/5N2/PPPN1PPP/R1BQKB1R w KQkq - 0 5
+2024-07-23 18:58:38,758 INFO Sugessted move: d7d6
+2024-07-23 18:58:38,758 INFO Score evaluation: PovScore(Cp(0), BLACK)
+2024-07-23 18:58:44,676 INFO FEN: rnbq1rk1/ppp1ppbp/3p1np1/8/3PP3/3B1N2/PPPN1PPP/R1BQK2R w KQ - 2 6
+2024-07-23 18:58:44,676 INFO Sugessted move: e8g8
+2024-07-23 18:58:44,676 INFO Score evaluation: PovScore(Cp(+2), BLACK)
+2024-07-23 18:58:53,721 INFO FEN: r1bq1rk1/ppp1ppbp/2np1np1/8/3PP3/2PB1N2/PP1N1PPP/R1BQK2R w KQ - 1 7
+2024-07-23 18:58:53,722 INFO Sugessted move: b8c6
+2024-07-23 18:58:53,722 INFO Score evaluation: PovScore(Cp(+3), BLACK)
+2024-07-23 18:59:00,038 INFO FEN: r1bq1rk1/ppp2pbp/2np1np1/4p3/3PP3/2PB1N2/PP1N1PPP/R1BQ1RK1 w - - 0 8
+2024-07-23 18:59:00,038 INFO Sugessted move: e7e5
+2024-07-23 18:59:00,039 INFO Score evaluation: PovScore(Cp(+2), BLACK)
+2024-07-23 18:59:08,546 INFO FEN: r1bq1rk1/ppp2pbp/3p1np1/4n3/4P3/2PB1N2/PP1N1PPP/R1BQ1RK1 w - - 0 9
+2024-07-23 18:59:08,546 INFO Sugessted move: c6e5
+2024-07-23 18:59:08,547 INFO Score evaluation: PovScore(Cp(+1), BLACK)
+2024-07-23 18:59:14,361 INFO FEN: r1bq1rk1/ppp2pbp/5np1/4p3/4P3/2PB4/PP1N1PPP/R1BQ1RK1 w - - 0 10
+2024-07-23 18:59:14,361 INFO Sugessted move: d6e5
+2024-07-23 18:59:14,362 INFO Score evaluation: PovScore(Cp(0), BLACK)
+2024-07-23 18:59:23,860 INFO FEN: r1b2rk1/ppp1qpbp/5np1/4p3/4P3/2PB1N2/PP3PPP/R1BQ1RK1 w - - 2 11
+2024-07-23 18:59:23,860 INFO Sugessted move: d8e7
+2024-07-23 18:59:23,861 INFO Score evaluation: PovScore(Cp(+2), BLACK)
+2024-07-23 18:59:33,651 INFO FEN: r1b2rk1/ppp1qpbp/6p1/4p2n/4P3/2PB1N2/PP2QPPP/R1B2RK1 w - - 4 12
+2024-07-23 18:59:33,652 INFO Sugessted move: f6h5
+2024-07-23 18:59:33,652 INFO Score evaluation: PovScore(Cp(+3), BLACK)
+2024-07-23 18:59:42,563 INFO FEN: r1b2rk1/ppp1qpbp/6p1/4p3/2B1Pn2/2P2N2/PP2QPPP/R1B2RK1 w - - 6 13
+2024-07-23 18:59:42,564 INFO Sugessted move: h5f4
+2024-07-23 18:59:42,564 INFO Score evaluation: PovScore(Cp(0), BLACK)
+2024-07-23 18:59:49,033 INFO FEN: r4rk1/ppp1qpbp/6p1/4p3/2B1Pnb1/2P2N2/PP3PPP/R1B1QRK1 w - - 8 14
+2024-07-23 18:59:49,033 INFO Sugessted move: c8g4
+2024-07-23 18:59:49,034 INFO Score evaluation: PovScore(Cp(+16), BLACK)
+2024-07-23 18:59:56,476 INFO FEN: r4rk1/ppp1qpbp/6p1/8/2B1Ppb1/2P2N2/PP3PPP/R3QRK1 w - - 0 15
+2024-07-23 18:59:56,477 INFO Sugessted move: e5f4
+2024-07-23 18:59:56,477 INFO Score evaluation: PovScore(Cp(+12), BLACK)
+2024-07-23 19:00:04,361 INFO FEN: 4rrk1/ppp1qpbp/6p1/8/2B1Ppb1/2P2N2/PP3PPP/3RQRK1 w - - 2 16
+2024-07-23 19:00:04,361 INFO Sugessted move: a8e8
+2024-07-23 19:00:04,362 INFO Score evaluation: PovScore(Cp(+21), BLACK)
+2024-07-23 19:00:12,638 INFO FEN: 4rrk1/ppp1qpbp/6p1/8/2B1Pp2/2P2b1P/PP3PP1/3RQRK1 w - - 0 17
+2024-07-23 19:00:12,638 INFO Sugessted move: g4f3
+2024-07-23 19:00:12,639 INFO Score evaluation: PovScore(Cp(+28), BLACK)
+2024-07-23 19:00:22,822 INFO FEN: 4rrk1/ppp1qp1p/6p1/4b3/2B1Pp2/2P2P1P/PP3P2/3RQRK1 w - - 1 18
+2024-07-23 19:00:22,823 INFO Sugessted move: g7e5
+2024-07-23 19:00:22,823 INFO Score evaluation: PovScore(Cp(+30), BLACK)
+2024-07-23 19:00:30,310 INFO FEN: 4rrk1/pp2qp1p/2p3p1/4b3/P1B1Pp2/2P2P1P/1P3P2/3RQRK1 w - - 0 19
+2024-07-23 19:00:30,311 INFO Sugessted move: c7c6
+2024-07-23 19:00:30,311 INFO Score evaluation: PovScore(Cp(+34), BLACK)
+2024-07-23 19:00:38,501 INFO FEN: 4rr2/pp2qpkp/2p3p1/4b3/P1B1Pp2/2P2P1P/1P2QP2/3R1RK1 w - - 2 20
+2024-07-23 19:00:38,501 INFO Sugessted move: g8g7
+2024-07-23 19:00:38,502 INFO Score evaluation: PovScore(Cp(+31), BLACK)
+2024-07-23 19:00:47,320 INFO FEN: 4rr2/pp3pkp/2p3p1/4b3/P1B1Pp1q/2PR1P1P/1P2QP2/5RK1 w - - 4 21
+2024-07-23 19:00:47,320 INFO Sugessted move: e7h4
+2024-07-23 19:00:47,320 INFO Score evaluation: PovScore(Cp(+32), BLACK)
+2024-07-23 19:00:56,322 INFO FEN: 4rr2/pp3pkp/2p3p1/4b1q1/P1B1Pp2/2PR1P1P/1P2QPK1/5R2 w - - 6 22
+2024-07-23 19:00:56,322 INFO Sugessted move: h4g5
+2024-07-23 19:00:56,323 INFO Score evaluation: PovScore(Cp(+30), BLACK)
+2024-07-23 19:01:04,041 INFO FEN: 3r1r2/pp3pkp/2p3p1/4b1q1/P1B1Pp2/2PR1P1P/1P2QP1K/5R2 w - - 8 23
+2024-07-23 19:01:04,041 INFO Sugessted move: e8d8
+2024-07-23 19:01:04,042 INFO Score evaluation: PovScore(Cp(+32), BLACK)
+2024-07-23 19:01:13,713 INFO FEN: 3r1r2/pp2qpkp/2p3p1/4b3/P1B1Pp2/2PR1P1P/1P2QP1K/6R1 w - - 10 24
+2024-07-23 19:01:13,714 INFO Sugessted move: g5e7
+2024-07-23 19:01:13,714 INFO Score evaluation: PovScore(Cp(+36), BLACK)
+2024-07-23 19:01:17,994 INFO FEN: 3r1r2/pp2qpkp/2p3p1/4b3/P1B1Pp2/2PR1P1P/1P2QP1K/6R1 w - - 10 24
+2024-07-23 19:01:17,995 INFO Sugessted move: g5e7
+2024-07-23 19:01:17,995 INFO Score evaluation: PovScore(Cp(+35), BLACK)
+2024-07-23 19:01:21,216 INFO FEN: 3r4/pp2qpkp/2p3p1/4b3/P1B1Pp2/2P2P1P/1P2QP1K/6R1 w - - 0 25
+2024-07-23 19:01:21,217 INFO Sugessted move: f8d8
+2024-07-23 19:01:21,217 INFO Score evaluation: PovScore(Cp(+35), BLACK)
+2024-07-23 19:01:27,320 INFO FEN: 8/pp2qpkp/2p3p1/4b3/P1B1Pp2/2P2P1P/1P2QP1K/3r4 w - - 0 26
+2024-07-23 19:01:27,321 INFO Sugessted move: d8d1
+2024-07-23 19:01:27,321 INFO Score evaluation: PovScore(Cp(+31), BLACK)
+2024-07-23 19:01:33,743 INFO FEN: 8/pp3pkp/2p3p1/2q1b3/P1B1Pp2/2P2P1P/1P3P1K/3Q4 w - - 1 27
+2024-07-23 19:01:33,744 INFO Sugessted move: e7c5
+2024-07-23 19:01:33,744 INFO Score evaluation: PovScore(Cp(+33), BLACK)
+2024-07-23 19:01:42,641 INFO FEN: 8/ppb2pkp/2p3p1/2q5/P1B1Pp2/2P2P1P/1P3P1K/5Q2 w - - 3 28
+2024-07-23 19:01:42,641 INFO Sugessted move: e5c7
+2024-07-23 19:01:42,642 INFO Score evaluation: PovScore(Cp(+39), BLACK)
+2024-07-23 19:01:49,898 INFO FEN: 8/ppb2pkp/2pq2p1/8/PPB1Pp2/2P2P1P/5P1K/5Q2 w - - 1 29
+2024-07-23 19:01:49,898 INFO Sugessted move: c5d6
+2024-07-23 19:01:49,898 INFO Score evaluation: PovScore(Cp(+34), BLACK)
+2024-07-23 19:01:56,460 INFO FEN: 8/ppb2pkp/2p3p1/8/PPB1Pp2/2P2P1P/3q1P2/5QK1 w - - 3 30
+2024-07-23 19:01:56,460 INFO Sugessted move: d6d2
+2024-07-23 19:01:56,460 INFO Score evaluation: PovScore(Cp(+52), BLACK)
+2024-07-23 19:02:01,657 INFO FEN: 8/ppb2pkp/2p3p1/8/PPB1Pp2/2Pq1P1P/5P2/6K1 w - - 0 31
+2024-07-23 19:02:01,658 INFO Sugessted move: d2d3
+2024-07-23 19:02:01,658 INFO Score evaluation: PovScore(Cp(+54), BLACK)
+2024-07-23 19:02:09,813 INFO FEN: 8/ppb2p1p/2p2kp1/8/PP2Pp2/2PB1P1P/5P2/6K1 w - - 1 32
+2024-07-23 19:02:09,813 INFO Sugessted move: g7f6
+2024-07-23 19:02:09,814 INFO Score evaluation: PovScore(Cp(+61), BLACK)
+2024-07-23 19:02:15,422 INFO FEN: 8/pp3p1p/2p2kp1/4b3/PP2Pp2/2PB1P1P/5PK1/8 w - - 3 33
+2024-07-23 19:02:15,423 INFO Sugessted move: c7e5
+2024-07-23 19:02:15,423 INFO Score evaluation: PovScore(Cp(+68), BLACK)
+2024-07-23 19:02:20,570 INFO FEN: 8/pp3p1p/2p2kp1/8/PP2Pp2/2bB1P1P/5P2/5K2 w - - 0 34
+2024-07-23 19:02:20,570 INFO Sugessted move: e5c3
+2024-07-23 19:02:20,571 INFO Score evaluation: PovScore(Cp(+74), BLACK)
+2024-07-23 19:02:26,029 INFO FEN: 8/pp3p1p/2p3p1/4k3/PP3p2/2bB1P1P/5P2/5K2 w - - 0 35
+2024-07-23 19:02:26,030 INFO Sugessted move: f6e5
+2024-07-23 19:02:26,030 INFO Score evaluation: PovScore(Cp(+206), BLACK)
+2024-07-23 19:02:32,048 INFO FEN: 8/pp3p1p/2p3p1/1P6/P2k1p2/2bB1P1P/5P2/5K2 w - - 1 36
+2024-07-23 19:02:32,048 INFO Sugessted move: e5d4
+2024-07-23 19:02:32,049 INFO Score evaluation: PovScore(Cp(+220), BLACK)
+2024-07-23 19:02:37,311 INFO FEN: 8/pp3p1p/2p3p1/1Pk5/P3Bp2/2b2P1P/5P2/5K2 w - - 3 37
+2024-07-23 19:02:37,311 INFO Sugessted move: d4c5
+2024-07-23 19:02:37,312 INFO Score evaluation: PovScore(Cp(+238), BLACK)
+2024-07-23 19:02:45,283 INFO FEN: 8/pp3p1p/2p3p1/1P6/Pk3p2/2bB1P1P/5P2/5K2 w - - 5 38
+2024-07-23 19:02:45,284 INFO Sugessted move: c5b4
+2024-07-23 19:02:45,284 INFO Score evaluation: PovScore(Cp(+231), BLACK)
+2024-07-23 19:02:50,357 INFO FEN: 8/p4p1p/2p3p1/8/Pk3p2/2bB1P1P/5P2/5K2 w - - 0 39
+2024-07-23 19:02:50,358 INFO Sugessted move: b7c6
+2024-07-23 19:02:50,358 INFO Score evaluation: PovScore(Cp(+250), BLACK)
+2024-07-23 19:02:57,134 INFO FEN: 8/p4p1p/6p1/2p5/Pk3p2/2b2P1P/2B2P2/5K2 w - - 0 40
+2024-07-23 19:02:57,134 INFO Sugessted move: c6c5
+2024-07-23 19:02:57,135 INFO Score evaluation: PovScore(Cp(+299), BLACK)
+2024-07-23 19:03:04,332 INFO FEN: 8/p4p1p/6p1/8/Pkp2p2/2b2P1P/5P2/3B1K2 w - - 0 41
+2024-07-23 19:03:04,332 INFO Sugessted move: c5c4
+2024-07-23 19:03:04,332 INFO Score evaluation: PovScore(Cp(+310), BLACK)
+2024-07-23 19:03:12,102 INFO FEN: 8/5p1p/6p1/p7/Pkp2p2/2b2P1P/4BP2/5K2 w - - 0 42
+2024-07-23 19:03:12,102 INFO Sugessted move: a7a5
+2024-07-23 19:03:12,103 INFO Score evaluation: PovScore(Cp(+346), BLACK)
+2024-07-23 19:03:18,764 INFO FEN: 8/5p1p/6p1/p7/Pkpb1p2/5P1P/5P2/3B1K2 w - - 2 43
+2024-07-23 19:03:18,765 INFO Sugessted move: c3d4
+2024-07-23 19:03:18,765 INFO Score evaluation: PovScore(Cp(+390), BLACK)
+2024-07-23 19:03:24,710 INFO FEN: 8/5p1p/6p1/p7/Pk1b1p2/2p2P1P/4BP2/5K2 w - - 0 44
+2024-07-23 19:03:24,711 INFO Sugessted move: c4c3
+2024-07-23 19:03:24,711 INFO Score evaluation: PovScore(Cp(+423), BLACK)
+2024-07-23 19:03:27,154 INFO FEN: 8/5p1p/6p1/p7/Pk1b1p2/2p2P1P/4BP2/5K2 w - - 0 44
+2024-07-23 19:03:27,154 INFO Sugessted move: c4c3
+2024-07-23 19:03:27,155 INFO Score evaluation: PovScore(Cp(+430), BLACK)
+2024-07-23 19:03:29,741 INFO FEN: 8/5p1p/6p1/p7/P2b1p2/k1p2P1P/5P2/3B1K2 w - - 2 45
+2024-07-23 19:03:29,742 INFO Sugessted move: b4a3
+2024-07-23 19:03:29,742 INFO Score evaluation: PovScore(Cp(+440), BLACK)
+2024-07-23 19:03:33,368 INFO FEN: 8/5p1p/6p1/p7/P2b1p2/2p2P1P/1k2KP2/3B4 w - - 4 46
+2024-07-23 19:03:33,368 INFO Sugessted move: a3b2
+2024-07-23 19:03:33,368 INFO Score evaluation: PovScore(Cp(+439), BLACK)
+2024-07-23 19:03:35,207 INFO FEN: 8/5p1p/6p1/p7/P2b1p2/2p2P1P/1k2KP2/3B4 w - - 4 46
+2024-07-23 19:03:35,208 INFO Sugessted move: a3b2
+2024-07-23 19:03:35,208 INFO Score evaluation: PovScore(Cp(+441), BLACK)
+2024-07-23 19:03:37,318 INFO FEN: 8/5p1p/6p1/p7/P4p2/2pK1P1P/1k3b2/3B4 w - - 0 47
+2024-07-23 19:03:37,318 INFO Sugessted move: d4f2
+2024-07-23 19:03:37,318 INFO Score evaluation: PovScore(Cp(+467), BLACK)
+2024-07-23 19:03:42,464 INFO FEN: 8/5p1p/6p1/p7/P4p2/2pK1P1P/1kB5/4b3 w - - 2 48
+2024-07-23 19:03:42,464 INFO Sugessted move: f2e1
+2024-07-23 19:03:42,465 INFO Score evaluation: PovScore(Cp(+505), BLACK)
+2024-07-23 19:03:47,693 INFO FEN: 8/7p/6p1/p4p2/P4p2/2pK1P1P/1k6/3Bb3 w - - 0 49
+2024-07-23 19:03:47,693 INFO Sugessted move: f7f5
+2024-07-23 19:03:47,694 INFO Score evaluation: PovScore(Cp(+593), BLACK)
+2024-07-23 19:03:53,064 INFO FEN: 8/7p/6p1/p4p2/P4p2/5P1P/1kp1K3/3Bb3 w - - 0 50
+2024-07-23 19:03:53,065 INFO Sugessted move: c3c2
+2024-07-23 19:03:53,065 INFO Score evaluation: PovScore(Cp(+1047), BLACK)
+2024-07-23 19:03:57,381 INFO FEN: 8/7p/6p1/p4p2/P4p2/5P1P/2k1K3/4b3 w - - 0 51
+2024-07-23 19:03:57,381 INFO Sugessted move: b2c2
+2024-07-23 19:03:57,382 INFO Score evaluation: PovScore(Cp(+1144), BLACK)
+2024-07-23 19:04:03,046 INFO FEN: 8/7p/6p1/p4p2/P4p2/3k1P1P/8/4K3 w - - 1 52
+2024-07-23 19:04:03,047 INFO Sugessted move: c2d3
+2024-07-23 19:04:03,047 INFO Score evaluation: PovScore(Cp(+1185), BLACK)
+2024-07-23 19:04:11,686 INFO FEN: 8/7p/6p1/p4p2/P4p2/5P1P/3k1K2/8 w - - 3 53
+2024-07-23 19:04:11,686 INFO Sugessted move: d3d2
+2024-07-23 19:04:11,687 INFO Score evaluation: PovScore(Cp(+1051), BLACK)
+2024-07-23 19:04:17,561 INFO FEN: 8/7p/6p1/p4p2/P4p2/5P1P/4k1K1/8 w - - 5 54
+2024-07-23 19:04:17,562 INFO Sugessted move: d2e2
+2024-07-23 19:04:17,562 INFO Score evaluation: PovScore(Cp(+1272), BLACK)
+2024-07-23 19:04:20,994 INFO FEN: 8/7p/6p1/p4p2/P4p2/5P1P/4k1K1/8 w - - 5 54
+2024-07-23 19:04:20,994 INFO Sugessted move: d2e2
+2024-07-23 19:04:20,995 INFO Score evaluation: PovScore(Cp(+1218), BLACK)
+2024-07-23 19:04:24,378 INFO FEN: 8/7p/6p1/p4p2/P4p2/5k1P/8/6K1 w - - 0 55
+2024-07-23 19:04:24,379 INFO Sugessted move: e2f3
+2024-07-23 19:04:24,379 INFO Score evaluation: PovScore(Cp(+1291), BLACK)
+2024-07-23 19:04:29,137 INFO FEN: 8/7p/6p1/p4p2/P4p2/6kP/8/5K2 w - - 2 56
+2024-07-23 19:04:29,137 INFO Sugessted move: f3g3
+2024-07-23 19:04:29,138 INFO Score evaluation: PovScore(Cp(+1193), BLACK)
+2024-07-23 19:04:35,342 INFO FEN: 8/7p/6p1/p4p2/P4p2/7k/8/4K3 w - - 0 57
+2024-07-23 19:04:35,342 INFO Sugessted move: g3h3
+2024-07-23 19:04:35,343 INFO Score evaluation: PovScore(Cp(+1245), BLACK)
+2024-07-23 19:04:42,859 INFO FEN: 8/7p/6p1/p4p2/P4p2/8/4K1k1/8 w - - 2 58
+2024-07-23 19:04:42,859 INFO Sugessted move: h3g2
+2024-07-23 19:04:42,860 INFO Score evaluation: PovScore(Cp(+1312), BLACK)
+2024-07-23 19:04:48,780 INFO FEN: 8/7p/6p1/p4p2/P7/5p2/6k1/3K4 w - - 0 59
+2024-07-23 19:04:48,780 INFO Sugessted move: f4f3
+2024-07-23 19:04:48,780 INFO Score evaluation: PovScore(Cp(+1544), BLACK)
+2024-07-23 19:04:54,172 INFO FEN: 8/7p/6p1/p4p2/P7/8/3K1pk1/8 w - - 0 60
+2024-07-23 19:04:54,172 INFO Sugessted move: f3f2
+2024-07-23 19:04:54,173 INFO Score evaluation: PovScore(Cp(+1395), BLACK)
+2024-07-23 19:04:56,200 INFO FEN: 8/7p/6p1/p4p2/P7/8/3K1pk1/8 w - - 0 60
+2024-07-23 19:04:56,200 INFO Sugessted move: f3f2
+2024-07-23 19:04:56,200 INFO Score evaluation: PovScore(Cp(+1366), BLACK)
+2024-07-23 20:03:13,227 WARNING <UciProtocol (pid=21612)>: stderr >>        _
+2024-07-23 20:03:13,228 WARNING <UciProtocol (pid=21612)>: stderr >> |   _ | |
+2024-07-23 20:03:13,229 WARNING <UciProtocol (pid=21612)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:03:15,392 WARNING <UciProtocol (pid=21612)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 20:03:15,402 WARNING <UciProtocol (pid=21612)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 20:03:15,420 WARNING <UciProtocol (pid=21612)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 20:03:15,422 WARNING <UciProtocol (pid=21612)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 20:03:15,422 WARNING <UciProtocol (pid=21612)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 20:03:15,422 WARNING <UciProtocol (pid=21612)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 20:03:15,423 WARNING <UciProtocol (pid=21612)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 20:03:15,423 WARNING <UciProtocol (pid=21612)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 20:03:15,423 WARNING <UciProtocol (pid=21612)>: stderr >> GPU compute capability: 7.5
+2024-07-23 20:03:15,423 WARNING <UciProtocol (pid=21612)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 20:03:21,303 INFO FEN: rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2
+2024-07-23 20:03:21,303 INFO Sugessted move: d7d5
+2024-07-23 20:03:21,304 INFO Score evaluation: PovScore(Cp(-2), BLACK)
+2024-07-23 20:03:27,102 INFO FEN: rnbqkb1r/ppp1pppp/5n2/3P4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 1 3
+2024-07-23 20:03:27,103 INFO Sugessted move: g8f6
+2024-07-23 20:03:27,103 INFO Score evaluation: PovScore(Cp(-1), BLACK)
+2024-07-23 20:03:33,407 INFO FEN: rnbqkb1r/pp2pppp/2p2n2/3P4/8/2N5/PPPP1PPP/R1BQKBNR w KQkq - 0 4
+2024-07-23 20:03:33,407 INFO Sugessted move: c7c6
+2024-07-23 20:03:33,408 INFO Score evaluation: PovScore(Cp(+2), BLACK)
+2024-07-23 20:03:38,483 INFO FEN: r1bqkb1r/pp2pppp/2n2n2/8/8/2N5/PPPP1PPP/R1BQKBNR w KQkq - 0 5
+2024-07-23 20:03:38,483 INFO Sugessted move: b8c6
+2024-07-23 20:03:38,484 INFO Score evaluation: PovScore(Cp(+1), BLACK)
+2024-07-23 20:03:45,123 INFO FEN: r2qkb1r/pp2pppp/2n2n2/1B6/6b1/2N5/PPPP1PPP/R1BQK1NR w KQkq - 2 6
+2024-07-23 20:03:45,123 INFO Sugessted move: c8g4
+2024-07-23 20:03:45,124 INFO Score evaluation: PovScore(Cp(+1), BLACK)
+2024-07-23 20:03:53,865 INFO FEN: r2qkb1r/pp3ppp/2n1pn2/1B6/6b1/2N5/PPPPNPPP/R1BQK2R w KQkq - 0 7
+2024-07-23 20:03:53,865 INFO Sugessted move: e7e6
+2024-07-23 20:03:53,866 INFO Score evaluation: PovScore(Cp(+1), BLACK)
+2024-07-23 20:03:56,742 INFO FEN: r2qkb1r/pp3ppp/2n1pn2/1B6/6b1/2N5/PPPPNPPP/R1BQK2R w KQkq - 0 7
+2024-07-23 20:03:56,742 INFO Sugessted move: e7e6
+2024-07-23 20:03:56,742 INFO Score evaluation: PovScore(Cp(+1), BLACK)
+2024-07-23 20:04:03,656 INFO FEN: 2rqkb1r/pp3ppp/2n1pn2/1B6/6b1/2NP4/PPP1NPPP/R1BQK2R w KQk - 1 8
+2024-07-23 20:04:03,657 INFO Sugessted move: a8c8
+2024-07-23 20:04:03,657 INFO Score evaluation: PovScore(Cp(+4), BLACK)
+2024-07-23 20:04:11,248 INFO FEN: 2rqkb1r/pp3ppp/2n1pn2/1B5b/8/2NP1P2/PPP1N1PP/R1BQK2R w KQk - 1 9
+2024-07-23 20:04:11,248 INFO Sugessted move: g4h5
+2024-07-23 20:04:11,249 INFO Score evaluation: PovScore(Cp(+5), BLACK)
+2024-07-23 20:04:18,081 INFO FEN: 3qkb1r/pp3ppp/2r1pn2/7b/8/2NP1P2/PPP1N1PP/R1BQK2R w KQk - 0 10
+2024-07-23 20:04:18,081 INFO Sugessted move: c8c6
+2024-07-23 20:04:18,081 INFO Score evaluation: PovScore(Cp(+1), BLACK)
+2024-07-23 20:04:25,939 INFO FEN: 3qk2r/pp3ppp/2rbpn2/7b/8/2NP1P2/PPP1N1PP/R1BQ1RK1 w k - 2 11
+2024-07-23 20:04:25,939 INFO Sugessted move: f8d6
+2024-07-23 20:04:25,939 INFO Score evaluation: PovScore(Cp(+4), BLACK)
+2024-07-23 20:04:32,529 INFO FEN: 3q1rk1/pp3ppp/2rbpn2/7b/8/2NPBP2/PPP1N1PP/R2Q1RK1 w - - 4 12
+2024-07-23 20:04:32,529 INFO Sugessted move: e8g8
+2024-07-23 20:04:32,530 INFO Score evaluation: PovScore(Cp(+3), BLACK)
+2024-07-23 20:04:40,249 INFO FEN: 3q1rk1/1p3ppp/p1rbpn2/7b/8/2NPBP2/PPP1N1PP/R3QRK1 w - - 0 13
+2024-07-23 20:04:40,249 INFO Sugessted move: a7a6
+2024-07-23 20:04:40,250 INFO Score evaluation: PovScore(Cp(+5), BLACK)
+2024-07-23 20:04:46,839 INFO FEN: 3q1rk1/1p3ppp/p1r1pn2/7b/5b2/2NPBP2/PPP3PP/R3QRK1 w - - 0 14
+2024-07-23 20:04:46,840 INFO Sugessted move: d6f4
+2024-07-23 20:04:46,840 INFO Score evaluation: PovScore(Cp(+20), BLACK)
+2024-07-23 20:04:53,230 INFO FEN: 5rk1/1p3ppp/pqr1pn2/7b/5B2/2NP1P2/PPP3PP/R3QRK1 w - - 1 15
+2024-07-23 20:04:53,230 INFO Sugessted move: d8b6
+2024-07-23 20:04:53,231 INFO Score evaluation: PovScore(Cp(+19), BLACK)
+2024-07-23 20:04:58,134 INFO FEN: 5rk1/1p3ppp/p1r1pn2/7b/8/2NPBP2/PqP3PP/R3QRK1 w - - 0 16
+2024-07-23 20:04:58,134 INFO Sugessted move: b6b2
+2024-07-23 20:04:58,135 INFO Score evaluation: PovScore(Cp(+19), BLACK)
+2024-07-23 20:05:04,837 INFO FEN: 5rk1/1p3ppp/p1r1pnb1/8/3B4/2NP1P2/PqP3PP/R3QRK1 w - - 2 17
+2024-07-23 20:05:04,837 INFO Sugessted move: h5g6
+2024-07-23 20:05:04,837 INFO Score evaluation: PovScore(Cp(+18), BLACK)
+2024-07-23 20:05:11,445 INFO FEN: 5rk1/1p3ppp/p1r1p1b1/4Q2n/3B4/2NP1P2/PqP3PP/R4RK1 w - - 4 18
+2024-07-23 20:05:11,445 INFO Sugessted move: f6h5
+2024-07-23 20:05:11,446 INFO Score evaluation: PovScore(Cp(+24), BLACK)
+2024-07-23 20:05:19,553 INFO FEN: 5rk1/1p3ppp/p1r1p1b1/4Q2n/3B4/3P1P2/P1q1N1PP/R4RK1 w - - 0 19
+2024-07-23 20:05:19,553 INFO Sugessted move: b2c2
+2024-07-23 20:05:19,554 INFO Score evaluation: PovScore(Cp(+24), BLACK)
+2024-07-23 20:05:24,736 INFO FEN: 5rk1/1p3ppp/p1r1p1b1/4Q2n/3B4/3q1P2/P3N1PP/R1R3K1 w - - 0 20
+2024-07-23 20:05:24,736 INFO Sugessted move: c2d3
+2024-07-23 20:05:24,736 INFO Score evaluation: PovScore(Cp(+23), BLACK)
+2024-07-23 20:05:31,697 INFO FEN: 5rk1/1p3ppp/p1r1p1b1/4Qq1n/3B1N2/5P2/P5PP/R1R3K1 w - - 2 21
+2024-07-23 20:05:31,698 INFO Sugessted move: d3f5
+2024-07-23 20:05:31,698 INFO Score evaluation: PovScore(Cp(+21), BLACK)
+2024-07-23 20:05:38,290 INFO FEN: 5rk1/1p3ppp/p1r1p1b1/4q2N/3B4/5P2/P5PP/R1R3K1 w - - 0 22
+2024-07-23 20:05:38,290 INFO Sugessted move: f5e5
+2024-07-23 20:05:38,291 INFO Score evaluation: PovScore(Cp(+28), BLACK)
+2024-07-23 20:05:44,841 INFO FEN: 5rk1/1p3ppp/p1r1p3/4B2b/8/5P2/P5PP/R1R3K1 w - - 0 23
+2024-07-23 20:05:44,842 INFO Sugessted move: g6h5
+2024-07-23 20:05:44,842 INFO Score evaluation: PovScore(Cp(+29), BLACK)
+2024-07-23 20:05:49,216 INFO FEN: 5rk1/5ppp/p1p1p3/4B2b/8/5P2/P5PP/R5K1 w - - 0 24
+2024-07-23 20:05:49,216 INFO Sugessted move: b7c6
+2024-07-23 20:05:49,217 INFO Score evaluation: PovScore(Cp(+29), BLACK)
+2024-07-23 20:05:54,774 INFO FEN: 2r3k1/2B2ppp/p1p1p3/7b/8/5P2/P5PP/R5K1 w - - 2 25
+2024-07-23 20:05:54,774 INFO Sugessted move: f8c8
+2024-07-23 20:05:54,774 INFO Score evaluation: PovScore(Cp(+52), BLACK)
+2024-07-23 20:06:03,230 INFO FEN: 2r3k1/2B2pp1/p1p1p2p/7b/8/5P2/P5PP/1R4K1 w - - 0 26
+2024-07-23 20:06:03,230 INFO Sugessted move: h7h6
+2024-07-23 20:06:03,231 INFO Score evaluation: PovScore(Cp(+45), BLACK)
+2024-07-23 20:06:10,186 INFO FEN: 1r4k1/2B2pp1/p1p1p2p/7b/8/5P2/P5PP/6K1 w - - 0 27
+2024-07-23 20:06:10,186 INFO Sugessted move: c8b8
+2024-07-23 20:06:10,186 INFO Score evaluation: PovScore(Cp(+94), BLACK)
+2024-07-23 20:06:16,129 INFO FEN: 1B4k1/6p1/p1p1pp1p/7b/8/5P2/P5PP/6K1 w - - 0 28
+2024-07-23 20:06:16,129 INFO Sugessted move: f7f6
+2024-07-23 20:06:16,130 INFO Score evaluation: PovScore(Cp(+98), BLACK)
+2024-07-23 20:06:22,750 INFO FEN: 1B4k1/6p1/p1p2p1p/4p2b/8/5P2/P4KPP/8 w - - 0 29
+2024-07-23 20:06:22,750 INFO Sugessted move: e6e5
+2024-07-23 20:06:22,750 INFO Score evaluation: PovScore(Cp(+110), BLACK)
+2024-07-23 20:06:30,205 INFO FEN: 6k1/2B5/p1p2p1p/4p1pb/8/5P2/P4KPP/8 w - - 0 30
+2024-07-23 20:06:30,206 INFO Sugessted move: g7g5
+2024-07-23 20:06:30,206 INFO Score evaluation: PovScore(Cp(+130), BLACK)
+2024-07-23 20:06:37,980 INFO FEN: 8/2B2k2/p1p2p1p/4p1pb/P7/5P2/5KPP/8 w - - 1 31
+2024-07-23 20:06:37,980 INFO Sugessted move: g8f7
+2024-07-23 20:06:37,980 INFO Score evaluation: PovScore(Cp(+131), BLACK)
+2024-07-23 20:06:44,466 INFO FEN: 8/5k2/p1pB1pbp/4p1p1/P7/5P2/5KPP/8 w - - 3 32
+2024-07-23 20:06:44,467 INFO Sugessted move: h5g6
+2024-07-23 20:06:44,467 INFO Score evaluation: PovScore(Cp(+130), BLACK)
+2024-07-23 20:06:52,546 INFO FEN: 8/5k2/p1p3bp/4ppp1/P7/B4P2/5KPP/8 w - - 0 33
+2024-07-23 20:06:52,547 INFO Sugessted move: f6f5
+2024-07-23 20:06:52,547 INFO Score evaluation: PovScore(Cp(+167), BLACK)
+2024-07-23 20:06:59,688 INFO FEN: 8/5k2/p1p3bp/4pp2/P6p/B4P2/5KP1/8 w - - 0 34
+2024-07-23 20:06:59,689 INFO Sugessted move: g5h4
+2024-07-23 20:06:59,689 INFO Score evaluation: PovScore(Cp(+206), BLACK)
+2024-07-23 20:07:05,311 INFO FEN: 8/5k2/p1p3bp/5p2/P3pP1p/B7/5KP1/8 w - - 0 35
+2024-07-23 20:07:05,312 INFO Sugessted move: e5e4
+2024-07-23 20:07:05,312 INFO Score evaluation: PovScore(Cp(+208), BLACK)
+2024-07-23 20:07:11,540 INFO FEN: 8/5k2/p1p4p/5p1b/P3pP1p/B3K3/6P1/8 w - - 2 36
+2024-07-23 20:07:11,540 INFO Sugessted move: g6h5
+2024-07-23 20:07:11,540 INFO Score evaluation: PovScore(Cp(+223), BLACK)
+2024-07-23 20:07:18,589 INFO FEN: 8/5k2/p1p4p/5p2/PB2pPbp/4K3/6P1/8 w - - 4 37
+2024-07-23 20:07:18,589 INFO Sugessted move: h5g4
+2024-07-23 20:07:18,590 INFO Score evaluation: PovScore(Cp(+225), BLACK)
+2024-07-23 20:07:23,937 INFO FEN: 8/5k2/p1p4p/5p2/P3pPb1/4K2p/6P1/4B3 w - - 0 38
+2024-07-23 20:07:23,938 INFO Sugessted move: h4h3
+2024-07-23 20:07:23,938 INFO Score evaluation: PovScore(Cp(+266), BLACK)
+2024-07-23 20:07:28,899 INFO FEN: 8/5k2/p1p4p/5p2/P3pP2/4K2b/8/4B3 w - - 0 39
+2024-07-23 20:07:28,899 INFO Sugessted move: g4h3
+2024-07-23 20:07:28,899 INFO Score evaluation: PovScore(Cp(+269), BLACK)
+2024-07-23 20:07:37,025 INFO FEN: 8/8/p1p1k2p/5p2/PB2pP2/4K2b/8/8 w - - 2 40
+2024-07-23 20:07:37,025 INFO Sugessted move: f7e6
+2024-07-23 20:07:37,025 INFO Score evaluation: PovScore(Cp(+304), BLACK)
+2024-07-23 20:07:42,525 INFO FEN: 5B2/8/p1p1k3/5p1p/P3pP2/4K2b/8/8 w - - 0 41
+2024-07-23 20:07:42,526 INFO Sugessted move: h6h5
+2024-07-23 20:07:42,526 INFO Score evaluation: PovScore(Cp(+418), BLACK)
+2024-07-23 20:07:51,416 INFO FEN: 8/8/p1p1k2B/5p1p/P3pPb1/4K3/8/8 w - - 2 42
+2024-07-23 20:07:51,416 INFO Sugessted move: h3g4
+2024-07-23 20:07:51,417 INFO Score evaluation: PovScore(Cp(+439), BLACK)
+2024-07-23 20:07:58,618 INFO FEN: 8/8/p1p5/3k1pBp/P3pPb1/4K3/8/8 w - - 4 43
+2024-07-23 20:07:58,618 INFO Sugessted move: e6d5
+2024-07-23 20:07:58,619 INFO Score evaluation: PovScore(Cp(+418), BLACK)
+2024-07-23 20:08:05,887 INFO FEN: 8/8/p7/2pk1p1p/P3pPbB/4K3/8/8 w - - 0 44
+2024-07-23 20:08:05,888 INFO Sugessted move: c6c5
+2024-07-23 20:08:05,888 INFO Score evaluation: PovScore(Cp(+420), BLACK)
+2024-07-23 20:08:12,520 INFO FEN: 8/8/p7/P1p2p1p/2k1pPbB/4K3/8/8 w - - 1 45
+2024-07-23 20:08:12,520 INFO Sugessted move: d5c4
+2024-07-23 20:08:12,521 INFO Score evaluation: PovScore(Cp(+433), BLACK)
+2024-07-23 20:08:20,236 INFO FEN: 8/8/p7/P1p2p1p/1k2pPb1/4K1B1/8/8 w - - 3 46
+2024-07-23 20:08:20,236 INFO Sugessted move: c4b4
+2024-07-23 20:08:20,236 INFO Score evaluation: PovScore(Cp(+538), BLACK)
+2024-07-23 20:08:25,978 INFO FEN: 8/8/p7/k1p2p1p/4pPb1/6B1/3K4/8 w - - 0 47
+2024-07-23 20:08:25,978 INFO Sugessted move: b4a5
+2024-07-23 20:08:25,978 INFO Score evaluation: PovScore(Cp(+601), BLACK)
+2024-07-23 20:08:32,971 INFO FEN: 8/8/p7/2p2p1p/1k2pPb1/6B1/2K5/8 w - - 2 48
+2024-07-23 20:08:32,971 INFO Sugessted move: a5b4
+2024-07-23 20:08:32,972 INFO Score evaluation: PovScore(Cp(+665), BLACK)
+2024-07-23 20:08:41,408 INFO FEN: 8/8/p7/2p2p1p/4pPb1/1k4B1/8/1K6 w - - 4 49
+2024-07-23 20:08:41,408 INFO Sugessted move: b4b3
+2024-07-23 20:08:41,409 INFO Score evaluation: PovScore(Cp(+869), BLACK)
+2024-07-23 20:08:50,004 INFO FEN: 8/8/8/p1p2p1p/4pPb1/1k4B1/8/2K5 w - - 0 50
+2024-07-23 20:08:50,004 INFO Sugessted move: a6a5
+2024-07-23 20:08:50,004 INFO Score evaluation: PovScore(Cp(+888), BLACK)
+2024-07-23 20:08:56,624 INFO FEN: 8/8/8/2p2p1p/p3pPb1/1k4B1/3K4/8 w - - 0 51
+2024-07-23 20:08:56,624 INFO Sugessted move: a5a4
+2024-07-23 20:08:56,624 INFO Score evaluation: PovScore(Cp(+883), BLACK)
+2024-07-23 20:09:04,319 INFO FEN: 8/8/8/5p1p/p1p1pPb1/1k6/3K1B2/8 w - - 0 52
+2024-07-23 20:09:04,319 INFO Sugessted move: c5c4
+2024-07-23 20:09:04,319 INFO Score evaluation: PovScore(Cp(+921), BLACK)
+2024-07-23 20:09:11,873 INFO FEN: 8/8/8/5p1p/2p1pPb1/pk6/5B2/4K3 w - - 0 53
+2024-07-23 20:09:11,874 INFO Sugessted move: a4a3
+2024-07-23 20:09:11,874 INFO Score evaluation: PovScore(Cp(+1443), BLACK)
+2024-07-23 20:09:19,791 INFO FEN: 8/8/8/5p1p/2pBpPb1/1k6/p7/4K3 w - - 0 54
+2024-07-23 20:09:19,791 INFO Sugessted move: a3a2
+2024-07-23 20:09:19,792 INFO Score evaluation: PovScore(Cp(+1298), BLACK)
+2024-07-23 20:09:26,616 INFO FEN: 8/8/8/5p2/2pBpPbp/1k6/p2K4/8 w - - 0 55
+2024-07-23 20:09:26,616 INFO Sugessted move: h5h4
+2024-07-23 20:09:26,617 INFO Score evaluation: PovScore(Cp(+1564), BLACK)
+2024-07-23 20:09:32,110 INFO FEN: 8/8/8/4Bp2/2p1pPb1/1k5p/p2K4/8 w - - 0 56
+2024-07-23 20:09:32,110 INFO Sugessted move: h4h3
+2024-07-23 20:09:32,111 INFO Score evaluation: PovScore(Cp(+1661), BLACK)
+2024-07-23 20:09:38,448 INFO FEN: 8/8/8/4Bp2/2p1pPb1/1k2K3/p6p/8 w - - 0 57
+2024-07-23 20:09:38,448 INFO Sugessted move: h3h2
+2024-07-23 20:09:38,449 INFO Score evaluation: PovScore(Cp(+1967), BLACK)
+2024-07-23 20:35:52,699 WARNING <UciProtocol (pid=17540)>: stderr >>        _
+2024-07-23 20:35:52,699 WARNING <UciProtocol (pid=17540)>: stderr >> |   _ | |
+2024-07-23 20:35:52,699 WARNING <UciProtocol (pid=17540)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:37:15,496 WARNING <UciProtocol (pid=31720)>: stderr >>        _
+2024-07-23 20:37:15,496 WARNING <UciProtocol (pid=31720)>: stderr >> |   _ | |
+2024-07-23 20:37:15,497 WARNING <UciProtocol (pid=31720)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:44:41,337 WARNING <UciProtocol (pid=12172)>: stderr >>        _
+2024-07-23 20:44:41,337 WARNING <UciProtocol (pid=12172)>: stderr >> |   _ | |
+2024-07-23 20:44:41,337 WARNING <UciProtocol (pid=12172)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:46:03,929 WARNING <UciProtocol (pid=37380)>: stderr >>        _
+2024-07-23 20:46:03,930 WARNING <UciProtocol (pid=37380)>: stderr >> |   _ | |
+2024-07-23 20:46:03,931 WARNING <UciProtocol (pid=37380)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:46:06,576 WARNING <UciProtocol (pid=37380)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 20:46:06,594 WARNING <UciProtocol (pid=37380)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 20:46:06,616 WARNING <UciProtocol (pid=37380)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 20:46:06,618 WARNING <UciProtocol (pid=37380)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 20:46:06,618 WARNING <UciProtocol (pid=37380)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 20:46:06,619 WARNING <UciProtocol (pid=37380)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 20:46:06,619 WARNING <UciProtocol (pid=37380)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 20:46:06,619 WARNING <UciProtocol (pid=37380)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 20:46:06,620 WARNING <UciProtocol (pid=37380)>: stderr >> GPU compute capability: 7.5
+2024-07-23 20:46:06,620 WARNING <UciProtocol (pid=37380)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 20:48:47,103 WARNING <UciProtocol (pid=15644)>: stderr >>        _
+2024-07-23 20:48:47,104 WARNING <UciProtocol (pid=15644)>: stderr >> |   _ | |
+2024-07-23 20:48:47,104 WARNING <UciProtocol (pid=15644)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:48:49,748 WARNING <UciProtocol (pid=15644)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 20:48:49,757 WARNING <UciProtocol (pid=15644)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 20:48:49,773 WARNING <UciProtocol (pid=15644)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 20:48:49,774 WARNING <UciProtocol (pid=15644)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 20:48:49,775 WARNING <UciProtocol (pid=15644)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 20:48:49,775 WARNING <UciProtocol (pid=15644)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 20:48:49,775 WARNING <UciProtocol (pid=15644)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 20:48:49,776 WARNING <UciProtocol (pid=15644)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 20:48:49,776 WARNING <UciProtocol (pid=15644)>: stderr >> GPU compute capability: 7.5
+2024-07-23 20:48:49,777 WARNING <UciProtocol (pid=15644)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 20:54:04,179 WARNING <UciProtocol (pid=21336)>: stderr >>        _
+2024-07-23 20:54:04,180 WARNING <UciProtocol (pid=21336)>: stderr >> |   _ | |
+2024-07-23 20:54:04,180 WARNING <UciProtocol (pid=21336)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 20:54:06,822 WARNING <UciProtocol (pid=21336)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 20:54:06,832 WARNING <UciProtocol (pid=21336)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 20:54:06,849 WARNING <UciProtocol (pid=21336)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 20:54:06,850 WARNING <UciProtocol (pid=21336)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 20:54:06,850 WARNING <UciProtocol (pid=21336)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 20:54:06,851 WARNING <UciProtocol (pid=21336)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 20:54:06,851 WARNING <UciProtocol (pid=21336)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 20:54:06,851 WARNING <UciProtocol (pid=21336)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 20:54:06,852 WARNING <UciProtocol (pid=21336)>: stderr >> GPU compute capability: 7.5
+2024-07-23 20:54:06,852 WARNING <UciProtocol (pid=21336)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 21:07:24,962 WARNING <UciProtocol (pid=16552)>: stderr >>        _
+2024-07-23 21:07:24,964 WARNING <UciProtocol (pid=16552)>: stderr >> |   _ | |
+2024-07-23 21:07:24,965 WARNING <UciProtocol (pid=16552)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 21:10:40,544 WARNING <UciProtocol (pid=4192)>: stderr >>        _
+2024-07-23 21:10:40,545 WARNING <UciProtocol (pid=4192)>: stderr >> |   _ | |
+2024-07-23 21:10:40,545 WARNING <UciProtocol (pid=4192)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 21:10:43,195 WARNING <UciProtocol (pid=4192)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 21:10:43,205 WARNING <UciProtocol (pid=4192)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 21:10:43,220 WARNING <UciProtocol (pid=4192)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 21:10:43,220 WARNING <UciProtocol (pid=4192)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 21:10:43,221 WARNING <UciProtocol (pid=4192)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 21:10:43,221 WARNING <UciProtocol (pid=4192)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 21:10:43,222 WARNING <UciProtocol (pid=4192)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 21:10:43,222 WARNING <UciProtocol (pid=4192)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 21:10:43,223 WARNING <UciProtocol (pid=4192)>: stderr >> GPU compute capability: 7.5
+2024-07-23 21:10:43,223 WARNING <UciProtocol (pid=4192)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 21:13:30,661 WARNING <UciProtocol (pid=23036)>: stderr >>        _
+2024-07-23 21:13:30,662 WARNING <UciProtocol (pid=23036)>: stderr >> |   _ | |
+2024-07-23 21:13:30,662 WARNING <UciProtocol (pid=23036)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 21:13:32,797 WARNING <UciProtocol (pid=23036)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 21:13:32,805 WARNING <UciProtocol (pid=23036)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 21:13:32,820 WARNING <UciProtocol (pid=23036)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 21:13:32,822 WARNING <UciProtocol (pid=23036)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 21:13:32,822 WARNING <UciProtocol (pid=23036)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 21:13:32,822 WARNING <UciProtocol (pid=23036)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 21:13:32,823 WARNING <UciProtocol (pid=23036)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 21:13:32,823 WARNING <UciProtocol (pid=23036)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 21:13:32,824 WARNING <UciProtocol (pid=23036)>: stderr >> GPU compute capability: 7.5
+2024-07-23 21:13:32,824 WARNING <UciProtocol (pid=23036)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 21:26:51,008 WARNING <UciProtocol (pid=24256)>: stderr >>        _
+2024-07-23 21:26:51,009 WARNING <UciProtocol (pid=24256)>: stderr >> |   _ | |
+2024-07-23 21:26:51,009 WARNING <UciProtocol (pid=24256)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 21:26:52,658 WARNING <UciProtocol (pid=24256)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 21:26:52,668 WARNING <UciProtocol (pid=24256)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 21:26:52,683 WARNING <UciProtocol (pid=24256)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 21:26:52,684 WARNING <UciProtocol (pid=24256)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 21:26:52,685 WARNING <UciProtocol (pid=24256)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 21:26:52,685 WARNING <UciProtocol (pid=24256)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 21:26:52,686 WARNING <UciProtocol (pid=24256)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 21:26:52,686 WARNING <UciProtocol (pid=24256)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 21:26:52,686 WARNING <UciProtocol (pid=24256)>: stderr >> GPU compute capability: 7.5
+2024-07-23 21:26:52,686 WARNING <UciProtocol (pid=24256)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 21:27:14,069 INFO FEN: 8/7K/8/8/8/8/1k6/q7 w - - 0 2
+2024-07-23 21:27:14,069 INFO Sugessted move: a2a1q
+2024-07-23 21:27:14,071 INFO Score evaluation: PovScore(Cp(+511), BLACK)
+2024-07-23 21:30:36,303 WARNING <UciProtocol (pid=9716)>: stderr >>        _
+2024-07-23 21:30:36,304 WARNING <UciProtocol (pid=9716)>: stderr >> |   _ | |
+2024-07-23 21:30:36,304 WARNING <UciProtocol (pid=9716)>: stderr >> |_ |_ |_| v0.31.0 built Jun 16 2024
+2024-07-23 21:30:38,445 WARNING <UciProtocol (pid=9716)>: stderr >> Loading weights file from: C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz
+2024-07-23 21:30:38,453 WARNING <UciProtocol (pid=9716)>: stderr >> Creating backend [cuda-auto]...
+2024-07-23 21:30:38,470 WARNING <UciProtocol (pid=9716)>: stderr >> Switching to [cuda-fp16]...
+2024-07-23 21:30:38,471 WARNING <UciProtocol (pid=9716)>: stderr >> CUDA Runtime version: 11.1.0
+2024-07-23 21:30:38,471 WARNING <UciProtocol (pid=9716)>: stderr >> Latest version of CUDA supported by the driver: 12.3.0
+2024-07-23 21:30:38,472 WARNING <UciProtocol (pid=9716)>: stderr >> GPU: NVIDIA GeForce RTX 2070 SUPER
+2024-07-23 21:30:38,472 WARNING <UciProtocol (pid=9716)>: stderr >> GPU memory: 7.99957 Gb
+2024-07-23 21:30:38,472 WARNING <UciProtocol (pid=9716)>: stderr >> GPU clock frequency: 1770 MHz
+2024-07-23 21:30:38,473 WARNING <UciProtocol (pid=9716)>: stderr >> GPU compute capability: 7.5
+2024-07-23 21:30:38,473 WARNING <UciProtocol (pid=9716)>: stderr >> L2 cache capacity: 4194304
+2024-07-23 21:31:19,639 INFO FEN: 8/6K1/8/8/8/8/1k6/q7 w - - 0 2
+2024-07-23 21:31:19,640 INFO Sugessted move: a2a1q
+2024-07-23 21:31:19,640 INFO Score evaluation: PovScore(Cp(+520), BLACK)
+2024-07-23 21:31:38,936 INFO FEN: 6K1/8/8/8/8/2k5/8/q7 w - - 2 3
+2024-07-23 21:31:38,936 INFO Sugessted move: b2c3
+2024-07-23 21:31:38,937 INFO Score evaluation: PovScore(Cp(+644), BLACK)
+2024-07-23 21:31:39,467 INFO FEN: 8/7K/8/8/8/2k5/8/6q1 w - - 4 4
+2024-07-23 21:31:39,468 INFO Sugessted move: a1g1
+2024-07-23 21:31:39,468 INFO Score evaluation: PovScore(Mate(+5), BLACK)
+2024-07-23 21:31:42,709 INFO FEN: 7K/8/8/8/3k4/8/8/6q1 w - - 6 5
+2024-07-23 21:31:42,709 INFO Sugessted move: c3d4
+2024-07-23 21:31:42,710 INFO Score evaluation: PovScore(Mate(+4), BLACK)
+2024-07-23 21:31:46,022 INFO FEN: 8/7K/8/4k3/8/8/8/6q1 w - - 8 6
+2024-07-23 21:31:46,022 INFO Sugessted move: d4e5
+2024-07-23 21:31:46,023 INFO Score evaluation: PovScore(Mate(+3), BLACK)
+2024-07-23 21:31:48,867 INFO FEN: 7K/8/5k2/8/8/8/8/6q1 w - - 10 7
+2024-07-23 21:31:48,867 INFO Sugessted move: e5f6
+2024-07-23 21:31:48,868 INFO Score evaluation: PovScore(Mate(+2), BLACK)
+2024-07-23 21:31:51,787 INFO FEN: 8/6qK/5k2/8/8/8/8/8 w - - 12 8
+2024-07-23 21:31:51,788 INFO Sugessted move: g1g7
+2024-07-23 21:31:51,788 INFO Score evaluation: PovScore(Mate(+1), BLACK)
