@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+import os
+import re
+from pathlib import Path
 import pyautogui
 import cv2
 import numpy as np
@@ -12,6 +15,7 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.common import NoSuchElementException, ElementNotInteractableException
 import chess
 import chess.engine
 from random import random
@@ -20,6 +24,7 @@ import time
 
 from logging import FileHandler, StreamHandler
 from logging.handlers import RotatingFileHandler
+import random
 
 handlers = [
     FileHandler('logs/log.log', encoding = 'utf-8'),  # Default mode='a', encoding=None
@@ -27,33 +32,6 @@ handlers = [
 ]
 logging.basicConfig(handlers=handlers, format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
 
-class new_move_has_occured(object):
-  
-  def __init__(self, moves):
-    self.moves = moves
-    self.num_of_moves = len(moves)    
-
-  def __call__(self, driver):
-    #//*[@id="main-wrap"]/main/div[1]/rm6/l4x/i5z[1]
-    #//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb
-    #mon_moves_we = driver.find_elements_by_class_name("move")   # Finding the referenced element
-    try:
-        element = driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/div/p[2]')
-        gameover = element.is_displayed()
-        if gameover:
-            return driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb')
-    except:
-        gameover=False
-    mon_moves_we = driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb')
-    mon_moves = [move.text for move in mon_moves_we]
-    if mon_moves and self.moves:
-        cond = self.num_of_moves < len(mon_moves) or self.moves[-1] != mon_moves[-1]
-    else:
-        cond = self.num_of_moves < len(mon_moves)
-    if cond:
-        return mon_moves_we
-    else:
-        return False
 
 class BrowserInterface(ABC):
 
@@ -64,25 +42,41 @@ class BrowserInterface(ABC):
 class ChessSiteInterface(ABC):
     
     @abstractmethod
-    def open_board(self):
+    def wait_for_game(self):
         pass
 
     @abstractmethod
     def promote_pawn(self, promotion_piece):
-        pass        
+        pass
+
+    @abstractmethod
+    def read_clock(self):
+        pass
+
+    @abstractmethod
+    def read_moves(self):
+        pass
+
+    @abstractmethod
+    def get_site_game_state(self):
+        pass
+
+    @abstractmethod
+    def is_game_over(self):
+        pass
 
 class ChromeBrowser(BrowserInterface):
-    def __init__(self, user_data_dir: str, web_driver_path: str):
+    def __init__(self, user_data_dir: str, profile_directory: str):
         #chromepath = r"C:\Users\MJakimiuk\OneDrive\Documents\py\stockfish\chromedriver.exe"    
-        self.user_data_dir = user_data_dir
-        self.web_driver_path = web_driver_path
+        self.user_data_path = Path(user_data_dir)
+        self.profile_path = Path(profile_directory)
         
     def configure_browser(self):
-        options = webdriver.ChromeOptions() 
-        #options.add_argument(r"user-data-dir=C:\Users\MJakimiuk\AppData\Local\Google\Chrome\User Data")
-        options.add_argument("user-data-dir="+self.user_data_dir)
+        options = webdriver.ChromeOptions()
+        options.add_argument(f"--user-data-dir={self.user_data_path}") #e.g. C:\Users\You\AppData\Local\Google\Chrome\User Data
+        options.add_argument(f'--profile-directory={self.profile_path}') #e.g. Profile 3
         self.options = options
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(options=options)
         return self.driver
 
 class FirefoxBrowser(BrowserInterface):
@@ -107,16 +101,12 @@ class LichessSite(ChessSiteInterface):
                                     'yellow': ['alt','shift']
                                     }
         
-    def open_board(self):
+    def wait_for_game(self):
         self.driver.get(self.site)
         #driver = webdriver.Chrome(executable_path=chromepath)
         waiter = WebDriverWait(self.driver, 600)
         waiter.until(EC.presence_of_element_located((By.XPATH,'//*[@id="main-wrap"]/main/div[1]/rm6/div[1]')))
-        if self.driver.find_element('xpath','//*[@id="main-wrap"]/main/div[1]/div[1]/div').get_attribute("class")=='cg-wrap orientation-black manipulable':
-            self.color = 'black'
-        else:
-            self.color = 'white'     
-        return self.color, self.driver
+        return self.driver
     
     def promote_pawn(self, promotion_piece):        
         promotion_order = ['q','n','r','b']
@@ -124,24 +114,48 @@ class LichessSite(ChessSiteInterface):
         promotion_xpath = f'//*[@id="promotion-choice"]/square[{promotion_no}]'
         self.driver.find_element('xpath',promotion_xpath).click()
     
-    def wait_for_move(self, moves):
+    def read_clock(self):
         try:
-            element = self.driver.find_element_by_xpath('//*[@id="main-wrap"]/main/div[1]/rm6/l4x/div/p[2]')
-            gameover = element.is_displayed()
+            time_str = self.driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/div[8]/div[2]')[0].text.replace('\n','')
         except:
-            gameover=False
-        if gameover:
-            return moves, gameover
+            time_str = self.driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/div[8]/div')[0].text.replace('\n','')
+        formats = ['%H:%M:%S', '%M:%S', '%M:%S.%f']
+        t_datetime = None
+        for fmt in formats:
+            try:
+                t_datetime = datetime.strptime(time_str, fmt)
+                break
+            except ValueError:
+                continue
+        if t_datetime is None:
+            return timedelta(days=999999)        
+        time = timedelta(hours=t_datetime.hour, minutes=t_datetime.minute, seconds=t_datetime.second, microseconds=t_datetime.microsecond)
+        return time
+    
+    def read_moves(self):
+        mon_moves_we = self.driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/rm6/l4x/kwdb')
+        moves = [move.text for move in mon_moves_we]
+        return moves
+    
+    def get_site_game_state(self):
+        self.moves = self.read_moves()
+        self.clock = self.read_clock()
+        self.gameover = self.is_game_over()
+
+    def is_game_over(self):
+        try:
+            element = self.driver.find_element('xpath','//*[@id="main-wrap"]/main/div[1]/rm6/l4x/div/p[1]')
+            gameover = element.is_displayed()
+            return gameover
+        except:
+            return False
+        
+    def get_color(self):
+        if self.driver.find_element('xpath','//*[@id="main-wrap"]/main/div[1]/div[1]/div').get_attribute("class")=='cg-wrap orientation-black manipulable':
+            self.color = 'black'
         else:
-            gameover = False
-        #waiter.until(EC.presence_of_element_located((By.ID, "logout"))
-        #moves = driver.find_elements_by_class_name("move")
-        waiter = WebDriverWait(self.driver, 600)
-        moves_we = waiter.until(new_move_has_occured(moves))
-        #moves=copy.deepcopy(moves_d)
-        #moves = driver.find_elements_by_class_name("move")
-        moves = [move.text for move in moves_we]
-        return moves, gameover
+            self.color = 'white'     
+        return self.color
 
 class ChessDotComSite(ChessSiteInterface):
     def __init__(self, driver):
@@ -160,17 +174,100 @@ class ChessDotComSite(ChessSiteInterface):
                                 'blue': ['alt']
                                 }
         
-    def open_board(self):
-        pass
+    def wait_for_game(self):
+        #driver = webdriver.Chrome(executable_path=chromepath)
+        board_element = (By.XPATH,'//*[@id="board-layout-sidebar"]/div/div[2]/div[1]/wc-eco-opening/div')
+        new_game_element = (By.XPATH,'//*[@id="board-layout-sidebar"]/div/div[2]/div[7]/button[1]')
+        waiter = WebDriverWait(self.driver, 600)
+        waiter.until(EC.presence_of_element_located(board_element))
+        waiter.until(EC.invisibility_of_element_located(new_game_element))
+        #driver = webdriver.Chrome(executable_path=chromepath)
+        # waiter = WebDriverWait(self.driver, timeout=600, ignored_exceptions=errors)
+        # errors = [NoSuchElementException, ElementNotInteractableException]
+        
+        # waiter.until(lambda d: board_element.is_displayed() and not new_game_element.is_displayed())
+        logging.info("Game detected")
+        return self.driver
+    
+    def get_color(self):
+        if 'black' in self.driver.find_element('xpath','//*[@id="board-layout-player-bottom"]/div/div[3]').get_attribute("class"):
+            self.color = 'black'
+        else:
+            self.color = 'white'     
+        return self.color
+    
+    def start_new_game(self):
+        self.driver.find_element('xpath','//*[@id="board-layout-sidebar"]/div/div[2]/div[7]/button[1]').click()
+    
+    def promote_pawn(self, promotion_piece):        
+        promotion_order = ['q','n','r','b']
+        promotion_no = promotion_order.index(promotion_piece)+1
+        promotion_xpath = f'//*[@id="promotion-choice"]/square[{promotion_no}]'
+        self.driver.find_element('xpath',promotion_xpath).click()
+    
+    def read_clock(self):
+        try:
+            time_str = self.driver.find_elements('xpath','//*[@id="board-layout-player-bottom"]/div/div[3]/span')[0].text
+        except:
+            time_str = '%21:%37'
+        formats = ['%H:%M:%S', '%M:%S', '%M:%S.%f']
+        t_datetime = None
+        for fmt in formats:
+            try:
+                t_datetime = datetime.strptime(time_str, fmt)
+                break
+            except ValueError:
+                continue
+        if t_datetime is None:
+            return timedelta(days=999999)        
+        time = timedelta(hours=t_datetime.hour, minutes=t_datetime.minute, seconds=t_datetime.second, microseconds=t_datetime.microsecond)
+        return time
+    
+    def read_moves(self):
+        n = 1
+        xpath_template = '//*[@id="live-game-tab-scroll-container"]/wc-move-list/wc-new-move-list/div/div[{n}]/div'
+        san_pattern = re.compile(r'^(?:[KQRBN]?[a-h]?[1-8]?x?[a-h][1-8](?:=[QRBN])?|O-O(?:-O)?)[+#]?$')
+        move_line = self.driver.find_elements('xpath',xpath_template.format(n=n))
+        if not move_line:
+            xpath_template = '//*[@id="live-game-tab-scroll-container"]/wc-move-list/wc-new-move-list/div/div[{n}]/div'
+            return []
+        moves = []
+        while move_line:
+            move_line = self.driver.find_elements('xpath',xpath_template.format(n=n))
+            if not move_line:
+                break
+            if bool(san_pattern.match(move_line[0].text)):
+                moves.append(move_line[0].text)
+            try:
+                if bool(san_pattern.match(move_line[1].text)):
+                    moves.append(move_line[1].text)
+            except:
+                pass
+            n+=1
+        return moves
+    
+    def get_site_game_state(self):
+        self.moves = self.read_moves()
+        self.clock = self.read_clock()
+        self.gameover = self.is_game_over()
+        #logging.info(f"Game state: {self.moves}, {self.clock}, {self.gameover}")
+
+    def is_game_over(self):
+        try:
+            element = self.driver.find_element('xpath','//*[@id="board-layout-sidebar"]/div/div[2]/div[8]/button[1]')
+            gameover = element.is_displayed()
+            return gameover
+        except:
+            return False
 
 class Factory:
     
     @staticmethod
-    def create_browser(browser_choice: str, user_data_dir: str, web_driver_path: str):
+    def create_browser(browser_choice: str,  user_data_dir: str, profile_directory: str):
         if browser_choice.lower() == 'chrome':
-            return ChromeBrowser(user_data_dir, web_driver_path)
+            return ChromeBrowser(user_data_dir, profile_directory)
         elif browser_choice.lower() == 'firefox':
-            return FirefoxBrowser(user_data_dir, web_driver_path)
+            return FirefoxBrowser(user_data_dir, profile_directory)
         else:
             raise ValueError(f"Unsupported browser: {browser_choice}")
     
@@ -305,8 +402,8 @@ class ChessBoardClicker:
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
         end_x, end_y = end_square['center']
-        pyautogui.moveTo(start_x, start_y, duration=move_speed)
-        pyautogui.dragTo(end_x, end_y, duration=drag_speed, button='left')
+        pyautogui.moveTo(start_x, start_y, move_speed, pyautogui.easeInElastic)
+        pyautogui.dragTo(end_x, end_y, drag_speed, pyautogui.easeInElastic, button='left')
         if promotion_piece is not None:
             try:
                 self.site_interface.promote_pawn(promotion_piece)
@@ -317,6 +414,9 @@ class ChessBoardClicker:
 class ChessGame:
     def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, start_postion: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
         self.color = color_perspective
+        self.followed_variant = []
+        self.variant_start_ply = 0
+        self.variant_followed_for_ply = 0
         if self.color == 'white':
             self.white_perspective = True
         else:
@@ -340,25 +440,34 @@ class ChessGame:
         self.moves.append(move)
         return self.board
     
-    def compare_moves_list(self, moves):
+    def is_game_synced(self):
         board_moves = self.board.move_stack
-        if len(moves) != len(board_moves):
+        site_moves = self.site.moves
+        if len(site_moves) != len(board_moves):
             return False
-        for i,move in enumerate(moves):
+        for i,move in enumerate(site_moves):
             if move != board_moves[i]:
                 return False
         return True
 
-    def sync_board(self, moves):  
+    def sync_board(self):  
         self.board = chess.Board(fen=self.start_position)               
-        for move in moves:
+        for move in self.site.moves:
             self.board.push_san(move)
-        self.moves = moves
+        self.moves = self.site.moves
         return self.board
     
     def find_best_move(self, time_limit: int = 5, multipv: int = 5):
+        start_time = time.time()
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit),multipv=multipv)
         if multipv == 1:
+            elapsed = time.time() - start_time
+            if elapsed < time_limit:
+                logging.info(f"Analysis took too short, sleeping for {time_limit-elapsed} seconds")
+                time.sleep((time_limit-elapsed)/2)
+            self.variant_start_ply = self.board.ply() + 1
+            self.variant_followed_for_ply = 1
+            self.followed_variant = analysis[0]['pv']
             return analysis
         best_cp = -1e10
         for i in range(multipv):
@@ -369,50 +478,87 @@ class ChessGame:
             if cp > best_cp:
                 best_cp = cp
                 best_variant = analysis[i]
+        elapsed = time.time() - start_time
+        logging.info(f"Analysis time: {elapsed}")
+        if elapsed < time_limit:
+            logging.info(f"Analysis took too short, sleeping for {time_limit-elapsed} seconds")
+            time.sleep((time_limit-elapsed)/2)
+        self.variant_start_ply = self.board.ply() + 1
+        self.variant_followed_for_ply = 1
+        self.followed_variant = best_variant[0]['pv']
         return best_variant
 
-def main():
+    def is_variant_followed(self):
+        try:
+            if self.board.move_stack[-1] == self.followed_variant[self.variant_followed_for_ply]:
+                return True
+            return False
+        except:
+            return False
+
+def auto_play_best_moves():
     browser_choice = 'chrome'
-    site_choice = 'lichess.org'
-    browser_driver_path = r"C:\Users\MJakimiuk\OneDrive\Documents\py\stockfish\chromedriver.exe"
-    user_data_dir = r"C:\Users\MJakimiuk\AppData\Local\Google\Chrome\User Data"
+    site_choice = 'chess.com' #'lichess.org'
+    user_data_dir = r"C:\ChromeProfile"
+    profile_directory = 'Default'
     engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
-    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz"
+    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1100.pb.gz" #r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz"
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
         "MinibatchSize": "1",
         "MaxPrefetch": "4"
     }
-    browser = Factory.create_browser(browser_choice, user_data_dir, browser_driver_path)
+    browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
     driver = browser.configure_browser()
     site = Factory.create_chess_site(site_choice, driver)
-    color, driver = site.open_board()
-    game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_postion='7K/8/8/8/8/8/pk6/8 w - - 0 1')
-    game.clicker.get_squares()
-    moves = []
-    while not game.gameover:
-        on_move = 'white' if game.board.turn else 'black'
-        if on_move != game.color:
-            moves, gameover = site.wait_for_move(moves)
-        if gameover:
-            game.gameover = True
-            break                
-        game.sync_board(moves)
-        if on_move != game.color:
-            continue
-        analysis = game.find_best_move(time_limit=5, multipv=1)
-        move_to_draw = analysis[0]['pv'][0]
-        game.clicker.make_move(move_to_draw.uci())
-        game.make_move(move_to_draw.uci())
-        logging.info(f'FEN: {game.board.fen()}')
-        logging.info(f'Sugessted move: {move_to_draw.uci()}')
-        logging.info(f"Score evaluation: {analysis[0]['score']}")       
-    driver.quit()
+    driver.get(site.site)
+    driver = site.wait_for_game()    
+    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    while True:
+        moves = []
+        color = site.get_color()
+        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_postion=startposition)    
+        game.clicker.get_squares()
+        while not game.gameover:
+            site.get_site_game_state()
+            game_synced = game.is_game_synced()
+            if not game_synced:
+                game.sync_board()
+            if site.gameover:
+                break
+            on_move = 'white' if game.board.turn else 'black'
+            if on_move != game.color:
+                continue 
+            logging.info(f"It's our move.")
+            if game.is_variant_followed():
+                logging.info(f"Opponent is following our variant. Making move.")
+                logging.info(f"We are following variant {game.followed_variant}")
+                logging.info(f"Variant followed for {game.variant_followed_for_ply} plys")
+                random_delay = int(round(random.normalvariate(1, 1),0))
+                random_delay = 0 if random_delay < 0 else random_delay
+                time.sleep(random_delay)
+                game.variant_followed_for_ply += 1
+                move_to_draw = game.followed_variant[game.variant_followed_for_ply]
+                game.variant_followed_for_ply += 1
+            else:
+                random_think = int(round(random.normalvariate(6, 3),0))
+                random_think = 1 if random_think < 1 else random_think
+                random_think = 1 if game.board.ply() < 2 else random_think
+                logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move.")
+                analysis = game.find_best_move(time_limit=random_think, multipv=1)
+                move_to_draw = analysis[0]['pv'][0]
+            game.clicker.make_move(move_to_draw.uci())
+            game.make_move(move_to_draw.uci())
+            logging.info(f'FEN: {game.board.fen()}')
+            logging.info(f'Sugessted move: {move_to_draw.uci()}')
+            logging.info(f"Score evaluation: {analysis[0]['score']}")       
+        site.start_new_game()
+        site.wait_for_game()
 
 
 if __name__ == "__main__":
-    main()
+    auto_play_best_moves()
 
 
 
