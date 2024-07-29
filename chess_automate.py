@@ -8,7 +8,6 @@ import cv2
 import numpy as np
 from PIL import Image
 import time
-import matplotlib.pyplot as plt
 import logging
 from operator import itemgetter
 from selenium import webdriver
