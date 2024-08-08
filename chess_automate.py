@@ -101,7 +101,6 @@ class LichessSite(ChessSiteInterface):
                                     }
         
     def wait_for_game(self):
-        self.driver.get(self.site)
         #driver = webdriver.Chrome(executable_path=chromepath)
         waiter = WebDriverWait(self.driver, 600)
         waiter.until(EC.presence_of_element_located((By.XPATH,'//*[@id="main-wrap"]/main/div[1]/rm6/div[1]')))
@@ -172,21 +171,27 @@ class ChessDotComSite(ChessSiteInterface):
                                 'green': ['shift'],
                                 'blue': ['alt']
                                 }
+        self.game_www = None
         
     def wait_for_game(self):
         #driver = webdriver.Chrome(executable_path=chromepath)
         board_element = (By.XPATH,'//*[@id="board-layout-sidebar"]/div/div[2]/div[1]/wc-eco-opening/div')
         new_game_element = (By.XPATH,'//*[@id="board-layout-sidebar"]/div/div[2]/div[7]/button[1]')
-        waiter = WebDriverWait(self.driver, 600)
-        waiter.until(EC.presence_of_element_located(board_element))
-        waiter.until(EC.invisibility_of_element_located(new_game_element))
+        try:
+            waiter = WebDriverWait(self.driver, 60)
+            waiter.until(EC.presence_of_element_located(board_element))
+            waiter.until(EC.invisibility_of_element_located(new_game_element))
+        except:
+            logging.error("Game not detected")
+            return False
         #driver = webdriver.Chrome(executable_path=chromepath)
         # waiter = WebDriverWait(self.driver, timeout=600, ignored_exceptions=errors)
         # errors = [NoSuchElementException, ElementNotInteractableException]
         
         # waiter.until(lambda d: board_element.is_displayed() and not new_game_element.is_displayed())
         logging.info("Game detected")
-        return self.driver
+        self.game_www = self.driver.current_url
+        return True
     
     def get_color(self):
         if 'black' in self.driver.find_element('xpath','//*[@id="board-layout-player-bottom"]/div/div[3]').get_attribute("class"):
@@ -202,28 +207,22 @@ class ChessDotComSite(ChessSiteInterface):
         buttons[0].click()
     
     def start_new_game(self):
-        elements_groups = self.driver.find_elements('xpath','//*[@id="board-layout-sidebar"]/div/div[2]/div')
-        i=1
         start = time.time()
         new_game_clicked = False
         while not new_game_clicked:
             try:
-                for e in elements_groups:
-                    if 'Rematch' in e.text:
-                        break
-                    i+=1
-                buttons = self.driver.find_elements('xpath',f'//*[@id="board-layout-sidebar"]/div/div[2]/div[{i}]/button')
+                buttons = self.driver.find_elements('class name','new-game-buttons-label')
                 for b in buttons:
-                    if 'New' in b.text:
+                    if 'New' in b.text or 'Accept' in b.text:
+                        b.click()
                         self.new_game_button = b
                         break                
-                self.new_game_button.click()
                 logging.info("New game button found and clicked")
                 new_game_clicked = True
                 return True
             except:
                 pass
-            if time.time() - start > 5*60:
+            if time.time() - start > 2*60:
                 logging.error("New game button not found")
                 return False
 
@@ -396,16 +395,16 @@ class ChessBoardClicker:
             if self.debug_mode:
                 cv2.imwrite("chessboard_detected.png", screenshot_cv)
 
-    def highlight_square(self, square_name, speed: float = 0.3, colour: str = 'red'):
+    def highlight_square(self, square_name, speed: float = 0.1, colour: str = 'red'):
         square = self.squares[square_name]
         center_x, center_y = square['center']        
-        keys = self.click_colours_keys[self.site][colour]
+        keys = self.site_interface.click_colours_keys[colour]
         if keys is not None:
             for key in keys:
                 pyautogui.keyDown(key)
         pyautogui.moveTo(center_x, center_y, duration=speed)
         pyautogui.mouseDown(button='right')
-        time.sleep(0.1)
+        time.sleep(0.08)
         pyautogui.mouseUp(button='right')
         if keys is not None:
             for key in keys:
@@ -420,7 +419,7 @@ class ChessBoardClicker:
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
         end_x, end_y = end_square['center']        
-        keys = self.arrow_colours_keys[colour]
+        keys = self.site_interface.arrow_colours_keys[colour]
         if keys is not None:
             for key in keys:
                 pyautogui.keyDown(key)
@@ -452,7 +451,7 @@ class ChessBoardClicker:
 
 
 class ChessGame:
-    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, start_postion: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
+    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
         self.color = color_perspective
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -463,8 +462,8 @@ class ChessGame:
             self.white_perspective = False
         self.moves = []
         self.gameover = False
-        self.board = chess.Board(fen=start_postion)
-        self.start_position = start_postion
+        self.board = chess.Board(fen=start_position)
+        self.start_position = start_position
         self.engine_path = engine_path
         self.engine_options = engine_options
         self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
@@ -475,13 +474,21 @@ class ChessGame:
         self.browser = browser_interface
         self.clicker = ChessBoardClicker(debug_mode=True, white_perspective=self.white_perspective, click_colours_keys=self.site.click_colours_keys, arrow_colours_keys=self.site.arrow_colours_keys, driver=self.browser.driver, site_interface=self.site)
 
+    def get_san_moves(self):
+        san_moves = []
+        temp_board = chess.Board(fen=self.start_position) # Tworzenie kopii planszy
+        for move in self.board.move_stack:
+            san_moves.append(temp_board.san(move))
+            temp_board.push(move)  # Aktualizacja kopii planszy
+        return san_moves
+    
     def make_move(self, move):
         self.board.push_uci(move)
         self.moves.append(move)
         return self.board
     
     def is_game_synced(self):
-        board_moves = self.board.move_stack
+        board_moves = self.get_san_moves()
         site_moves = self.site.moves
         if len(site_moves) != len(board_moves):
             return False
@@ -497,14 +504,14 @@ class ChessGame:
         self.moves = self.site.moves
         return self.board
     
-    def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5):
+    def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
         start_time = time.time()
         # Sprawdź liczbę legalnych ruchów
         num_legal_moves = len(list(self.board.legal_moves))
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
         if multipv == 1:
             elapsed = time.time() - start_time
-            if elapsed < time_limit and num_legal_moves > 2:
+            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
                 logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
                 time.sleep((time_limit-elapsed)/2)
             self.variant_start_ply = self.board.ply() + 1
@@ -522,7 +529,7 @@ class ChessGame:
                 best_variant = analysis[i]
         elapsed = time.time() - start_time
         logging.info(f"Analysis time: {elapsed}")
-        if elapsed < time_limit and num_legal_moves > 2:
+        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
             logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
             time.sleep((time_limit-elapsed)/2)
         self.variant_start_ply = self.board.ply() + 1
@@ -557,7 +564,7 @@ def auto_play_best_moves():
     user_data_dir = r"C:\ChromeProfile"
     profile_directory = 'Default'
     engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
-    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\maia-chess\maia_weights\maia-1500.pb.gz" #r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz"
+    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\maia-chess\maia_weights\maia-1100.pb.gz" #r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz"
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
@@ -570,12 +577,15 @@ def auto_play_best_moves():
     driver.get(site.site)
     time.sleep(2)
     site.start_first_game()
-    driver = site.wait_for_game()    
+    succes = site.wait_for_game()
+    if not succes:
+        driver.quit()
+        return    
     startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_postion=startposition)    
+        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)    
         game.clicker.get_squares()
         while not game.gameover:
             site.get_site_game_state()
@@ -587,24 +597,24 @@ def auto_play_best_moves():
             on_move = 'white' if game.board.turn else 'black'
             if on_move != site.color:
                 continue 
-            logging.info(f"It's our move.")
-            if game.is_variant_followed() and 1==2:
+            logging.info(f"It's our move. We play as {site.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
+            if game.is_variant_followed() and game.variant_followed_for_ply+1<len(game.followed_variant):
                 logging.info(f"Opponent is following our variant. Making move.")
                 logging.info(f"We are following variant {game.followed_variant}")
                 logging.info(f"Variant followed for {game.variant_followed_for_ply} plys")
-                random_delay = int(round(random.normalvariate(1, 1),0))
+                random_delay = 0#int(round(random.normalvariate(1, 1),0))
                 random_delay = 0 if random_delay < 0 else random_delay
                 time.sleep(random_delay)
                 game.variant_followed_for_ply += 1
                 move_to_draw = game.followed_variant[game.variant_followed_for_ply]
                 game.variant_followed_for_ply += 1
             else:
-                random_think = int(round(random.normalvariate(4, 2),0))
-                random_think = 1 if random_think < 1 else random_think
-                random_think = 1 if game.board.ply() < 2 else random_think
-                random_think = 0 if site.clock < timedelta(seconds=20) else random_think
+                random_think = round(random.normalvariate(1.5, 1.5),4)
+                random_think = 0 if random_think < 0 else random_think
+                random_think = 0 if game.board.ply() < 2 else random_think
+                random_think = 0 if site.clock < timedelta(seconds=15) else random_think
                 logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move.")
-                depth_limit = 1 if game.board.ply() > 12 else 1
+                depth_limit = 1 #if game.board.ply() > 12 else 5
                 analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
                 move_to_draw = analysis[0]['pv'][0]
             game.clicker.make_move(move_to_draw.uci())
@@ -620,18 +630,81 @@ def auto_play_best_moves():
             logging.info(f"Score evaluation: {analysis[0]['score']}")       
         time.sleep(random.randint(5,10))
         succes = site.start_new_game()
+        game.engine.quit()
         if not succes:
-            game.engine.quit()
+            driver.quit()
+            return        
+        succes = site.wait_for_game()
+        if not succes:
             driver.quit()
             return
+        
+def highlight_best_piece():
+    browser_choice = 'chrome'
+    site_choice = 'chess.com' #'lichess.org'
+    user_data_dir = r"C:\ChromeProfile"
+    profile_directory = 'Default'
+    engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
+    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\791556.pb.gz"
+    engine_options = {
+        "WeightsFile": engine_wieghts_path,
+        "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
+        "MinibatchSize": "1",
+        "MaxPrefetch": "4"
+    }
+    browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
+    driver = browser.configure_browser()
+    site = Factory.create_chess_site(site_choice, driver)
+    driver.get(site.site)
+    time.sleep(2)
+    succes = site.wait_for_game()
+    if not succes:
+        driver.quit()
+        return    
+    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    analyzed = False
+    while True:
+        moves = []
+        color = site.get_color()
+        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)    
+        game.clicker.get_squares()        
+        while not game.gameover:
+            site.get_site_game_state()
+            game_synced = game.is_game_synced()
+            if not game_synced:
+                game.sync_board()
+                analyzed = False
+            if site.gameover:
+                break
+            on_move = 'white' if game.board.turn else 'black'
+            if on_move != site.color or analyzed:
+                continue 
+            logging.info(f"It's our move.")            
+            random_think = 5
+            logging.info(f"Thinking time: {random_think}. Going to analyze the position and highlight piece with best move.")
+            depth_limit = 20
+            analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
+            move_to_draw = analysis[0]['pv'][0]
+            square = chess.square_name(move_to_draw.from_square)
+            game.clicker.highlight_square(square)
+            analyzed = True          
+            logging.info(f'FEN: {game.board.fen()}')
+            logging.info(f'Sugessted quare: {square}')
+            logging.info(f"Score evaluation: {analysis[0]['score']}")       
         game.engine.quit()
-        site.wait_for_game()
+        n=0
+        while driver.current_url == site.game_www and n<120:
+            time.sleep(0.5)
+            n+=1      
+        succes = site.wait_for_game()
+        if not succes:
+            driver.quit()
+            return
 
 
 if __name__ == "__main__":
     while True:
         auto_play_best_moves()
-
-
+        #highlight_best_piece()
 
         
