@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 import os
 import re
+import yaml
 from pathlib import Path
 import pyautogui
 import cv2
@@ -395,6 +396,14 @@ class ChessBoardClicker:
             if self.debug_mode:
                 cv2.imwrite("chessboard_detected.png", screenshot_cv)
 
+    def get_random_coordinates(self,square):
+        left, top = square['top_left']
+        right, bottom = square['bottom_right']
+        margin = 15
+        x = random.randint(left + margin, right - margin)
+        y = random.randint(top + margin, bottom - margin)
+        return x, y
+
     def highlight_square(self, square_name, speed: float = 0.1, colour: str = 'red'):
         square = self.squares[square_name]
         center_x, center_y = square['center']        
@@ -439,8 +448,8 @@ class ChessBoardClicker:
             promotion_piece = move_uci[4]
         start_square = self.squares[start_square]
         end_square = self.squares[end_square]
-        start_x, start_y = start_square['center']
-        end_x, end_y = end_square['center']
+        start_x, start_y = self.get_random_coordinates(start_square)
+        end_x, end_y = self.get_random_coordinates(end_square)
         pyautogui.moveTo(start_x, start_y, move_speed, pyautogui.easeInElastic)
         pyautogui.dragTo(end_x, end_y, drag_speed, pyautogui.easeInElastic, button='left')
         if promotion_piece is not None:
@@ -559,12 +568,13 @@ class ChessGame:
         return False
 
 def auto_play_best_moves():
-    browser_choice = 'chrome'
-    site_choice = 'chess.com' #'lichess.org'
-    user_data_dir = r"C:\ChromeProfile"
-    profile_directory = 'Default'
-    engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
-    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\maia-chess\maia_weights\maia-1100.pb.gz" #r"C:\Users\micha\OneDrive\Documents\py\chess_engines\maia-1900.pb.gz"
+    config_dict = yaml.safe_load(open('config.yaml'))['auto_play_best_moves']
+    browser_choice = config_dict['browser_choice']
+    site_choice = config_dict['site_choice']
+    user_data_dir = config_dict['user_data_dir']
+    profile_directory = config_dict['profile_directory']
+    engine_path = config_dict['engine_path']
+    engine_wieghts_path = config_dict['engine_wieghts_path']
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
@@ -640,6 +650,7 @@ def auto_play_best_moves():
             return
         
 def highlight_best_piece():
+    config_dict = yaml.safe_load(open('config.yaml'))['highlight_best_piece']
     browser_choice = 'chrome'
     site_choice = 'chess.com' #'lichess.org'
     user_data_dir = r"C:\ChromeProfile"

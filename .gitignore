@@ -2,3 +2,4 @@
 *.jpg
 /.venv
 /.vscode
+*.log

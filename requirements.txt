@@ -4,3 +4,4 @@ pillow==10.4.0
 opencv-python==4.10.0.84
 pyautogui==0.9.54
 numpy==2.0.0
+pyyaml==6.0.2

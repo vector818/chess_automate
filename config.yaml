@@ -1,0 +1,16 @@
+auto_play_best_moves:
+  browser_choice: chrome
+  site_choice: chess.com
+  user_data_dir: "C:/ChromeProfile"
+  profile_directory: Default
+  engine_path: "C:/py/chess_engines/lc0/lc0.exe"
+  engine_wieghts_path: "C:/py/maia-chess/maia_weights/maia-1100.pb.gz"
+
+
+highlight_best_move:
+  browser_choice: chrome
+  site_choice: chess.com
+  user_data_dir: "C:/ChromeProfile"
+  profile_directory: Default
+  engine_path: "C:/py/chess_engines/lc0/lc0.exe"
+  engine_wieghts_path: "C:/py/chess_engines/lc0/791556.pb.gz"
