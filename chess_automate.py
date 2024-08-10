@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import sys
+import traceback
 import os
 import re
 import yaml
@@ -63,6 +65,14 @@ class ChessSiteInterface(ABC):
 
     @abstractmethod
     def is_game_over(self):
+        pass
+
+    @abstractmethod
+    def get_color(self):
+        pass
+
+    @abstractmethod
+    def resign_game(self):
         pass
 
 class ChromeBrowser(BrowserInterface):
@@ -159,7 +169,7 @@ class LichessSite(ChessSiteInterface):
 class ChessDotComSite(ChessSiteInterface):
     def __init__(self, driver):
         self.driver = driver
-        self.site = 'https://www.chess.com/'
+        self.site = 'https://www.chess.com/play/online/new'
         self.click_colours_keys = {
                                     'red' : None,
                                     'yellow': ['ctrl'],
@@ -201,11 +211,27 @@ class ChessDotComSite(ChessSiteInterface):
             self.color = 'white'     
         return self.color
     
-    def start_first_game(self):
+    def start_first_game(self, **kwargs):
         waiter = WebDriverWait(self.driver, 600)
-        waiter.until(EC.presence_of_element_located((By.CLASS_NAME,'play-quick-links-link')))
-        buttons = self.driver.find_elements('class name','play-quick-links-link')
-        buttons[0].click()
+        try:
+            self.driver.find_element('class name','coach-nudges-modal-close').click()
+        except:
+            pass
+        waiter.until(EC.presence_of_element_located((By.CLASS_NAME,'selector-button-button')))
+        list_button = self.driver.find_element('class name','selector-button-button')
+        list_button.click()
+        time.sleep(0.2)
+        time_buttons = self.driver.find_elements('class name','time-selector-button-button')
+        for b in time_buttons:
+            if kwargs['time_control'] in b.text:
+                b.click()
+                clicked = True
+                break
+        if not clicked:
+            logging.error("Time control not found")
+            raise ValueError("Time control not found")
+        time.sleep(1)
+        self.driver.find_element('class name','cc-button-primary').click()
     
     def start_new_game(self):
         start = time.time()
@@ -299,6 +325,9 @@ class ChessDotComSite(ChessSiteInterface):
             return gameover
         except:
             return False
+        
+    def resign_game(self):
+        self.driver.find_element('class name','resign-button-label').click()
 
 class Factory:
     
@@ -439,6 +468,27 @@ class ChessBoardClicker:
             for key in keys:
                 pyautogui.keyUp(key)
         logging.info(f"Promote to {promotion_piece}")
+
+    def draw_arrow_between_random_squares(self, speed: float = 0.1, colour: str = 'red'):
+        # Get two random squares
+        start_square = random.choice(list(self.squares.keys()))
+        end_square = random.choice(list(self.squares.keys()))
+        
+        # Get the center coordinates of the squares
+        start_x, start_y = self.get_random_coordinates(self.squares[start_square])
+        end_x, end_y = self.get_random_coordinates(self.squares[end_square])
+        
+        # Draw the arrow between the squares
+        keys = self.site_interface.arrow_colours_keys[colour]
+        if keys is not None:
+            for key in keys:
+                pyautogui.keyDown(key)
+        pyautogui.moveTo(start_x, start_y, duration=speed)
+        time.sleep(0.1)
+        pyautogui.dragTo(end_x, end_y, duration=speed, button='right')
+        if keys is not None:
+            for key in keys:
+                pyautogui.keyUp(key)
     
     def make_move(self, move_uci: str, move_speed: float = 0.1, drag_speed: float = 0.2):
         start_square = move_uci[:2]
@@ -469,9 +519,20 @@ class ChessGame:
             self.white_perspective = True
         else:
             self.white_perspective = False
+        self.piece_values = {
+            chess.PAWN: 1,
+            chess.KNIGHT: 3,
+            chess.BISHOP: 3,
+            chess.ROOK: 5,
+            chess.QUEEN: 9
+        }
+        self.white_material_score = 0
+        self.black_material_score = 0
+        self.material_diff = 0
         self.moves = []
         self.gameover = False
         self.board = chess.Board(fen=start_position)
+        self.analysis = None
         self.start_position = start_position
         self.engine_path = engine_path
         self.engine_options = engine_options
@@ -511,13 +572,36 @@ class ChessGame:
         for move in self.site.moves:
             self.board.push_san(move)
         self.moves = self.site.moves
+        self.white_material_score = self.get_material_score(True)
+        self.black_material_score = self.get_material_score(False)
         return self.board
+    
+    def get_material_score(self, color: bool):
+        value = 0
+        for piece_type in self.piece_values:
+            value += len(self.board.pieces(piece_type, color)) * self.piece_values[piece_type]
+        return value
+    
+    def should_we_resign(self):
+        if self.analysis is None:
+            return False, None, None
+        if self.color == 'white':
+            material_diff = self.white_material_score - self.black_material_score
+        else:
+            material_diff = self.black_material_score - self.white_material_score
+        score = self.analysis[0]['score']
+        self.material_diff = material_diff
+        if material_diff <= -5 and self.analysis[0]['score'].relative.cp < -300:
+            return True, self.analysis[0]['score'], material_diff
+        else:
+            return False, self.analysis[0]['score'], material_diff
     
     def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
         start_time = time.time()
         # Sprawdź liczbę legalnych ruchów
         num_legal_moves = len(list(self.board.legal_moves))
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
+        self.analysis = analysis
         if multipv == 1:
             elapsed = time.time() - start_time
             if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
@@ -536,6 +620,7 @@ class ChessGame:
             if cp > best_cp:
                 best_cp = cp
                 best_variant = analysis[i]
+                self.analysis = best_variant
         elapsed = time.time() - start_time
         logging.info(f"Analysis time: {elapsed}")
         if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
@@ -586,7 +671,7 @@ def auto_play_best_moves():
     site = Factory.create_chess_site(site_choice, driver)
     driver.get(site.site)
     time.sleep(2)
-    site.start_first_game()
+    site.start_first_game(time_control='2 | 1')
     succes = site.wait_for_game()
     if not succes:
         driver.quit()
@@ -603,9 +688,20 @@ def auto_play_best_moves():
             if not game_synced:
                 game.sync_board()
             if site.gameover:
-                break
+                logging.info("Game over. We were playing as: {game.color}. Winner color ")
+                break                
             on_move = 'white' if game.board.turn else 'black'
             if on_move != site.color:
+                resign, cp_score, material_diff = game.should_we_resign()
+                if resign:
+                    logging.info(f"Resigning game. Material difference: {material_diff}. Score: {cp_score}")
+                    try:
+                        game.site.resign_game()
+                    except:
+                        pass
+                if not resign:
+                    if random.random() < 0.2:
+                        game.clicker.draw_arrow_between_random_squares()
                 continue 
             logging.info(f"It's our move. We play as {site.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
             if game.is_variant_followed() and game.variant_followed_for_ply+1<len(game.followed_variant):
@@ -637,7 +733,7 @@ def auto_play_best_moves():
                 pass            
             logging.info(f'FEN: {game.board.fen()}')
             logging.info(f'Sugessted move: {move_to_draw.uci()}')
-            logging.info(f"Score evaluation: {analysis[0]['score']}")       
+            logging.info(f"Score evaluation: {analysis[0]['score']} | Material diff: {game.material_diff}")       
         time.sleep(random.randint(5,10))
         succes = site.start_new_game()
         game.engine.quit()
@@ -715,7 +811,12 @@ def highlight_best_piece():
 
 if __name__ == "__main__":
     while True:
-        auto_play_best_moves()
-        #highlight_best_piece()
+        try:
+            auto_play_best_moves()
+            #highlight_best_piece()
+        except Exception as e:
+            logging.error('Unhandled exception caught:')
+            logging.error(e)
+            os._exit(1)
 
         
