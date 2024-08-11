@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 import sys
+import psutil
 import traceback
 import os
 import re
@@ -85,6 +86,9 @@ class ChromeBrowser(BrowserInterface):
         options = webdriver.ChromeOptions()
         options.add_argument(f"--user-data-dir={self.user_data_path}") #e.g. C:\Users\You\AppData\Local\Google\Chrome\User Data
         options.add_argument(f'--profile-directory={self.profile_path}') #e.g. Profile 3
+        options.add_argument("--start-maximized")
+        options.add_argument("--custom-flag=webdriver-session")
+        options.add_argument("--remote-debugging-port=2137")
         self.options = options
         self.driver = webdriver.Chrome(options=options)
         return self.driver
@@ -213,6 +217,7 @@ class ChessDotComSite(ChessSiteInterface):
     
     def start_first_game(self, **kwargs):
         waiter = WebDriverWait(self.driver, 600)
+        clicked = False
         try:
             self.driver.find_element('class name','coach-nudges-modal-close').click()
         except:
@@ -220,7 +225,7 @@ class ChessDotComSite(ChessSiteInterface):
         waiter.until(EC.presence_of_element_located((By.CLASS_NAME,'selector-button-button')))
         list_button = self.driver.find_element('class name','selector-button-button')
         list_button.click()
-        time.sleep(0.2)
+        time.sleep(0.5)
         time_buttons = self.driver.find_elements('class name','time-selector-button-button')
         for b in time_buttons:
             if kwargs['time_control'] in b.text:
@@ -808,6 +813,20 @@ def highlight_best_piece():
             driver.quit()
             return
 
+def close_webdrivers():
+    for process in psutil.process_iter(['pid', 'name']):
+        if 'chromedriver' in process.info['name'] or 'geckodriver' in process.info['name']:
+            logging.info(f"Zamykanie procesu {process.info['name']} o PID {process.info['pid']}")
+            process.terminate()
+
+def close_webdriver_browsers():
+    browsers = ['chrome', 'firefox', 'msedge']
+    for process in psutil.process_iter(['pid', 'name', 'cmdline']):
+        if any(browser in process.info['name'].lower() for browser in browsers):
+            cmdline = " ".join(process.info['cmdline']).lower()
+            if '--remote-debugging-port=2137' in cmdline or '--enable-automation' in cmdline or 'webdriver' in cmdline:
+                logging.info(f"Zamykanie procesu przeglądarki {process.info['name']} o PID {process.info['pid']}")
+                process.terminate()
 
 if __name__ == "__main__":
     while True:
@@ -815,8 +834,10 @@ if __name__ == "__main__":
             auto_play_best_moves()
             #highlight_best_piece()
         except Exception as e:
-            logging.error('Unhandled exception caught:')
+            logging.error('Unhandled exception caught')
             logging.error(e)
+            close_webdrivers()
+            close_webdriver_browsers()
             os._exit(1)
 
         

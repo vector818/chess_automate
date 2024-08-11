@@ -1,29 +1,36 @@
-﻿# Ścieżka do venv
+﻿# Zdefiniuj ścieżkę do środowiska wirtualnego (venv)
 $venvPath = "C:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Scripts\Activate.ps1"
 
-# Ścieżka do pliku Pythona
+# Zdefiniuj wzorzec do wyszukiwania w ścieżce wykonywalnej
+$pattern = "*chess_automate*"
+
+# Zdefiniuj ścieżkę do skryptu Pythona, który ma być uruchamiany, jeśli proces nie działa
 $pythonScriptPath = "C:\Users\micha\OneDrive\Documents\py\chess_automate\chess_automate.py"
 
-# Nazwa procesu Pythona
-$pythonProcessName = "python"
-
-# Interwał czasu (w sekundach)
-$interval = 60
-
+# Aktywuj środowisko wirtualne
 & $venvPath
 
-while ($true) {
-    # Sprawdzanie, czy skrypt Pythona działa
-    $processRunning = Get-Process | Where-Object { $_.Path -eq $pythonScriptPath }
+# Czas w sekundach pomiędzy sprawdzeniami
+$checkInterval = 10
 
-    if (-not $processRunning) {
-        # Jeśli skrypt nie działa, uruchom go w aktywowanym środowisku venv
-        Start-Process "python" -ArgumentList $pythonScriptPath
-        Write-Output "Skrypt Python został uruchomiony w venv."
+Start-Sleep -Seconds $checkInterval
+
+# Pętla while true
+while ($true) {
+    # Wyszukaj procesy Python, które pasują do wzorca w ścieżce
+    $processes = Get-WmiObject Win32_Process | Where-Object { $_.Name -eq 'python.exe' -and $_.ExecutablePath -like $pattern }
+
+    # Jeśli proces istnieje, wyświetl informacje o nim
+    if ($processes) {
+        $processes | Select-Object ProcessId, Name, ExecutablePath, CommandLine | Format-Table -AutoSize
     } else {
-        Write-Output "Skrypt Python już działa."
+        Write-Output "Nie znaleziono procesu Python z pasującą ścieżką: $pattern"
+        Write-Output "Uruchamiam skrypt Pythona: $pythonScriptPath"
+
+        # Uruchom skrypt Pythona
+        python $pythonScriptPath
     }
 
-    # Czekanie przez określony czas
-    Start-Sleep -Seconds $interval
+    # Odczekaj przed kolejną iteracją
+    Start-Sleep -Seconds $checkInterval
 }
