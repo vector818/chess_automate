@@ -21,6 +21,7 @@ from selenium.webdriver.common.by import By
 from selenium.common import NoSuchElementException, ElementNotInteractableException
 import chess
 import chess.engine
+import chess.polyglot
 from random import random
 from datetime import datetime,timedelta
 import time
@@ -189,6 +190,12 @@ class LichessSite(ChessSiteInterface):
         else:
             self.color = 'white'     
         return self.color
+    
+    def resign_game(self):
+        pass
+
+    def start_first_game(self,**kwargs):
+        pass
 
 class ChessDotComSite(ChessSiteInterface):
     def __init__(self, driver: webdriver):
@@ -383,7 +390,7 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_book: str = None):
         self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -410,6 +417,7 @@ class ChessGame:
         self.engine_path = engine_path
         self.engine_options = engine_options
         self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+        self.opening_book = opening_book
         if engine_options:
             for option, value in engine_options.items():
                 self.engine.configure({option: value})
@@ -469,6 +477,16 @@ class ChessGame:
     
     def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
         start_time = time.time()
+        if self.opening_book is not None:
+            with chess.polyglot.open_reader(self.opening_book) as reader:
+                try:
+                    entry = reader.find(self.board)
+                    book_move = entry.move()
+                    logging.info(f"Found book move: {book_move}")
+                    analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
+                    return book_move, analysis
+                except IndexError:
+                    logging.info("No book move found, proceeding with engine analysis.")
         # Sprawdź liczbę legalnych ruchów
         num_legal_moves = len(list(self.board.legal_moves))
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
@@ -481,7 +499,8 @@ class ChessGame:
             self.variant_start_ply = self.board.ply() + 1
             self.variant_followed_for_ply = 1
             self.followed_variant = analysis[0]['pv']
-            return analysis
+            best_move = analysis[0]['pv'][0]
+            return best_move, analysis
         best_cp = -1e10
         for i in range(multipv):
             if self.color == 'white':
@@ -500,7 +519,8 @@ class ChessGame:
         self.variant_start_ply = self.board.ply() + 1
         self.variant_followed_for_ply = 1
         self.followed_variant = best_variant[0]['pv']
-        return best_variant
+        best_move = best_variant[0]['pv'][0]
+        return best_move, best_variant
 
     def is_variant_followed(self):
         try:
@@ -690,6 +710,7 @@ def auto_play_best_moves():
         "MinibatchSize": "1",
         "MaxPrefetch": "4"
     }
+    opening_book = config_dict['opening_book']
     browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
     driver = browser.configure_browser()
     site = Factory.create_chess_site(site_choice, driver)
@@ -704,7 +725,7 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_book=opening_book)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False)   
         clicker.get_squares()
         while not game.gameover:
@@ -747,8 +768,7 @@ def auto_play_best_moves():
                 random_think = 0 if site.clock < timedelta(seconds=15) else random_think
                 logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move.")
                 depth_limit = 1 #if game.board.ply() > 12 else 5
-                analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
-                move_to_draw = analysis[0]['pv'][0]
+                move_to_draw, analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
             clicker.make_move(move_to_draw.uci())
             game.make_move(move_to_draw.uci())
             try:
@@ -818,8 +838,7 @@ def highlight_best_piece():
             random_think = 5
             logging.info(f"Thinking time: {random_think}. Going to analyze the position and highlight piece with best move.")
             depth_limit = 20
-            analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
-            move_to_draw = analysis[0]['pv'][0]
+            move_to_draw, analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
             square = chess.square_name(move_to_draw.from_square)
             clicker.highlight_square(square)
             analyzed = True          
