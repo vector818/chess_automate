@@ -682,7 +682,7 @@ def auto_play_best_moves():
     profile_directory = config_dict['profile_directory']
     engine_path = config_dict['engine_path']
     engine_wieghts_path = config_dict['engine_wieghts_path']
-    backend = 'cuda-fp16'
+    backend = config_dict['backend']
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": backend,
@@ -712,7 +712,7 @@ def auto_play_best_moves():
             if not game_synced:
                 game.sync_board()
             if site.gameover:
-                logging.info("Game over. We were playing as: {game.color}. Winner color ")
+                logging.info(f"Game over. We were playing as: {game.color}. Winner color: ")
                 break                
             on_move = 'white' if game.board.turn else 'black'
             if on_move != site.color:
@@ -724,7 +724,8 @@ def auto_play_best_moves():
                     except:
                         pass
                 if not resign:
-                    if random.random() < 0.4:
+                    if random.random() < 0.1:
+                        logging.info(f"Drawing random arrow because it's not out move, we play as {game.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
                         clicker.draw_arrow_between_random_squares()
                 continue 
             logging.info(f"It's our move. We play as {site.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
@@ -777,7 +778,7 @@ def highlight_best_piece():
     profile_directory = 'Default'
     engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
     engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\791556.pb.gz"
-    backend = 'cuda-fp16'
+    backend = config_dict['backend']
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": backend,
