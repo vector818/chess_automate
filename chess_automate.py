@@ -383,8 +383,8 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, color_perspective, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
-        self.color = color_perspective
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
+        self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
         self.variant_followed_for_ply = 0
@@ -524,7 +524,8 @@ class ChessGame:
         return False
 
 class ChessBoardClicker:
-    def __init__(self, site_interface: ChessSiteInterface, chess_game: ChessGame, debug_mode: bool = True, white_perspective: bool = True):
+    def __init__(self, site_interface: ChessSiteInterface, chess_game: ChessGame, debug_mode: bool = True):
+        white_perspective = True if site_interface.color == 'white' else False
         self.white_perspective = white_perspective
         self.debug_mode = debug_mode
         self.squares = {}
@@ -703,8 +704,8 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color_perspective=color, engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
-        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)   
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False)   
         clicker.get_squares()
         while not game.gameover:
             site.get_site_game_state()
@@ -724,7 +725,7 @@ def auto_play_best_moves():
                     except:
                         pass
                 if not resign:
-                    if random.random() < 0.1:
+                    if random.random() < 0.1 and game.board.ply() > 2:
                         logging.info(f"Drawing random arrow because it's not out move, we play as {game.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
                         clicker.draw_arrow_between_random_squares()
                 continue 
