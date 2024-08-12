@@ -406,6 +406,7 @@ class ChessGame:
         self.gameover = False
         self.board = chess.Board(fen=start_position)
         self.analysis = None
+        self.analysies = []
         self.start_position = start_position
         self.engine_path = engine_path
         self.engine_options = engine_options
@@ -501,6 +502,40 @@ class ChessGame:
         self.variant_followed_for_ply = 1
         self.followed_variant = best_variant[0]['pv']
         return best_variant
+    
+    def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 10):
+        start_time = time.time()
+        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
+        best_cp = 1e10
+        for i in range(multipv):
+            if self.color == 'white':
+                cp = analysis[i]['score'].white().cp
+            else:
+                cp = analysis[i]['score'].black().cp
+            if abs(cp) < abs(best_cp):
+                best_cp = cp
+                best_variant = analysis[i]
+                self.analysis = best_variant
+                self.analysies.append(best_variant)
+        elapsed = time.time() - start_time
+        best_move = best_variant['pv'][0]
+        logging.info(f"Analysis time: {elapsed}")
+        return best_variant
+
+    def blunder_detector(self, threshold: float = 200):
+        new_analysis = self.analysies[-1]
+        prv_analysis = self.analysies[-2]
+        if prv_analysis is None or new_analysis is None:
+            return False
+        if self.color == 'white':
+            cp = new_analysis['score'].white().cp
+            prv_cp = prv_analysis['score'].white().cp
+        else:
+            cp = new_analysis['score'].black().cp
+            prv_cp = prv_analysis['score'].black().cp
+        if prv_cp + threshold <= cp:
+            return True
+        return False
 
     def is_variant_followed(self):
         try:
@@ -773,12 +808,12 @@ def auto_play_best_moves():
         
 def highlight_best_piece():
     config_dict = yaml.safe_load(open('config.yaml'))['highlight_best_piece']
-    browser_choice = 'chrome'
-    site_choice = 'chess.com' #'lichess.org'
-    user_data_dir = r"C:\ChromeProfile"
-    profile_directory = 'Default'
-    engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
-    engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\791556.pb.gz"
+    browser_choice = config_dict['browser_choice']
+    site_choice = config_dict['site_choice']
+    user_data_dir = config_dict['user_data_dir']
+    profile_directory = config_dict['profile_directory']
+    engine_path = config_dict['engine_path']
+    engine_wieghts_path = config_dict['engine_wieghts_path']
     backend = config_dict['backend']
     engine_options = {
         "WeightsFile": engine_wieghts_path,
@@ -835,6 +870,71 @@ def highlight_best_piece():
         if not succes:
             driver.quit()
             return
+        
+def give_non_losing_move():
+    config_dict = yaml.safe_load(open('config.yaml'))['give_non_losing_move']
+    browser_choice = config_dict['browser_choice']
+    site_choice = config_dict['site_choice']
+    user_data_dir = config_dict['user_data_dir']
+    profile_directory = config_dict['profile_directory']
+    engine_path = config_dict['engine_path']
+    engine_wieghts_path = config_dict['engine_wieghts_path']
+    backend = config_dict['backend']
+    engine_options = {
+        "WeightsFile": engine_wieghts_path,
+        "Backend": backend,
+        "MinibatchSize": "1",
+        "MaxPrefetch": "4"
+    }
+    browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
+    driver = browser.configure_browser()
+    site = Factory.create_chess_site(site_choice, driver)
+    driver.get(site.site)
+    time.sleep(2)
+    succes = site.wait_for_game()
+    if not succes:
+        driver.quit()
+        return    
+    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    analyzed = False
+    while True:
+        moves = []
+        color = site.get_color()
+        game = ChessGame(color_perspective=color, engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)    
+        clicker.get_squares()        
+        while not game.gameover:
+            site.get_site_game_state()
+            game_synced = game.is_game_synced()
+            if not game_synced:
+                game.sync_board()
+                analyzed = False
+            if site.gameover:
+                break
+            on_move = 'white' if game.board.turn else 'black'
+            if on_move != site.color or analyzed:
+                continue 
+            logging.info(f"It's our move.")            
+            random_think = 5
+            logging.info(f"Thinking time: {random_think}. Going to analyze the position and give non losing move.")
+            depth_limit = 20
+            analysis = game.find_non_losing_move(time_limit=random_think, depth_limit=depth_limit, multipv=10)
+            move_to_draw = analysis[0]['pv'][0]
+            square = chess.square_name(move_to_draw.from_square)
+            clicker.highlight_square(square)
+            analyzed = True          
+            logging.info(f'FEN: {game.board.fen()}')
+            logging.info(f'Sugessted quare: {square}')
+            logging.info(f"Score evaluation: {analysis[0]['score']}")       
+        game.engine.quit()
+        n=0
+        while driver.current_url == site.game_www and n<120:
+            time.sleep(0.5)
+            n+=1      
+        succes = site.wait_for_game()
+        if not succes:
+            driver.quit()
+            return
 
 def close_webdrivers():
     for process in psutil.process_iter(['pid', 'name']):
@@ -854,8 +954,9 @@ def close_webdriver_browsers():
 if __name__ == "__main__":
     while True:
         try:
-            auto_play_best_moves()
+            #auto_play_best_moves()
             #highlight_best_piece()
+            give_non_losing_move()
         except Exception as e:
             logging.error('Unhandled exception caught')
             logging.error(e)
