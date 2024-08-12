@@ -28,6 +28,7 @@ import time
 from logging import FileHandler, StreamHandler
 from logging.handlers import RotatingFileHandler
 import random
+import copy
 
 handlers = [
     FileHandler('logs/log.log', encoding = 'utf-8'),  # Default mode='a', encoding=None
@@ -645,7 +646,7 @@ class ChessBoardClicker:
 
     def draw_arrow_between_random_squares(self, speed: float = 0.1, colour: str = 'red'):
         # Temp copy of actual game board
-        tmp_board = self.game.board.copy()
+        tmp_board = copy.deepcopy(self.game.board)
         # Change perspective (we only executing this method when it is not our move)
         tmp_board.turn = not tmp_board.turn
         # list of all legal moves in tmp_board
@@ -681,7 +682,7 @@ def auto_play_best_moves():
     profile_directory = config_dict['profile_directory']
     engine_path = config_dict['engine_path']
     engine_wieghts_path = config_dict['engine_wieghts_path']
-    backend = 'blas'
+    backend = 'cuda-fp16'
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": backend,
@@ -776,7 +777,7 @@ def highlight_best_piece():
     profile_directory = 'Default'
     engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
     engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\791556.pb.gz"
-    backend = 'blas'
+    backend = 'cuda-fp16'
     engine_options = {
         "WeightsFile": engine_wieghts_path,
         "Backend": backend,
