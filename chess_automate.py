@@ -255,7 +255,15 @@ class ChessDotComSite(ChessSiteInterface):
             logging.error("Time control not found")
             raise ValueError("Time control not found")
         time.sleep(1)
-        self.driver.find_element('class name','cc-button-primary').click()
+        buttons = self.driver.find_elements('class name','cc-button-primary')
+        clicked = False
+        for b in buttons:
+            if 'Play' in b.text:
+                b.click()
+                clicked = True
+        if not clicked:
+            logging.error("Play button not found")
+            raise ValueError("Play button not found")
     
     def start_new_game(self):
         start = time.time()
