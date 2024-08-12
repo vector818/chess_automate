@@ -700,7 +700,7 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)
+        game = ChessGame(color_perspective=color, engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)   
         clicker.get_squares()
         while not game.gameover:
@@ -794,7 +794,7 @@ def highlight_best_piece():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)
+        game = ChessGame(color_perspective=color, engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)    
         clicker.get_squares()        
         while not game.gameover:
@@ -853,6 +853,7 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error('Unhandled exception caught')
             logging.error(e)
+            logging.error(traceback.format_exc())
             close_webdrivers()
             close_webdriver_browsers()
             os._exit(1)
