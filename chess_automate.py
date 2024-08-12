@@ -626,6 +626,7 @@ class ChessBoardClicker:
         end_square = move_uci[2:4]
         if len(move_uci) > 4:
             promotion_piece = move_uci[4]
+            logging.info(f"Promote to {promotion_piece}")
         start_square = self.squares[start_square]
         end_square = self.squares[end_square]
         start_x, start_y = start_square['center']
@@ -640,7 +641,7 @@ class ChessBoardClicker:
         if keys is not None:
             for key in keys:
                 pyautogui.keyUp(key)
-        logging.info(f"Promote to {promotion_piece}")
+        
 
     def draw_arrow_between_random_squares(self, speed: float = 0.1, colour: str = 'red'):
         # Temp copy of actual game board
@@ -680,9 +681,10 @@ def auto_play_best_moves():
     profile_directory = config_dict['profile_directory']
     engine_path = config_dict['engine_path']
     engine_wieghts_path = config_dict['engine_wieghts_path']
+    backend = 'blas'
     engine_options = {
         "WeightsFile": engine_wieghts_path,
-        "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
+        "Backend": backend,
         "MinibatchSize": "1",
         "MaxPrefetch": "4"
     }
@@ -774,9 +776,10 @@ def highlight_best_piece():
     profile_directory = 'Default'
     engine_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\lc0.exe"
     engine_wieghts_path = r"C:\Users\micha\OneDrive\Documents\py\chess_engines\lc0\791556.pb.gz"
+    backend = 'blas'
     engine_options = {
         "WeightsFile": engine_wieghts_path,
-        "Backend": "cuda-auto",  # lub inna odpowiednia opcja backendu
+        "Backend": backend,
         "MinibatchSize": "1",
         "MaxPrefetch": "4"
     }
