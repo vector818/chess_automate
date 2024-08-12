@@ -38,11 +38,52 @@ logging.basicConfig(handlers=handlers, format='%(asctime)s %(levelname)s %(messa
 
 class BrowserInterface(ABC):
 
+    def __init__(self):
+        self.user_data_path = None
+        self.profile_path = None
+        self.options = None
+        self.driver = None
+
     @abstractmethod
     def configure_browser(self):
         pass
 
+class ChromeBrowser(BrowserInterface):
+    def __init__(self, user_data_dir: str, profile_directory: str):
+        super().__init__()
+        #chromepath = r"C:\Users\MJakimiuk\OneDrive\Documents\py\stockfish\chromedriver.exe"    
+        self.user_data_path = Path(user_data_dir)
+        self.profile_path = Path(profile_directory)
+        
+    def configure_browser(self):
+        options = webdriver.ChromeOptions()
+        options.add_argument(f"--user-data-dir={self.user_data_path}") #e.g. C:\Users\You\AppData\Local\Google\Chrome\User Data
+        options.add_argument(f'--profile-directory={self.profile_path}') #e.g. Profile 3
+        options.add_argument("--start-maximized")
+        options.add_argument("--custom-flag=webdriver-session")
+        options.add_argument("--remote-debugging-port=2137")
+        self.options = options
+        self.driver = webdriver.Chrome(options=options)
+        return self.driver
+
+class FirefoxBrowser(BrowserInterface):
+    def __init__(self):
+        super().__init__()
+        pass
+    def configure_browser(self):
+        pass
+
 class ChessSiteInterface(ABC):
+
+    def __init__(self,driver: webdriver):
+        self.driver = driver
+        self.site = None
+        self.click_colours_keys = None
+        self.arrow_colours_keys = None
+        self.moves = None
+        self.clock = None
+        self.gameover = None
+        self.color = None
     
     @abstractmethod
     def wait_for_game(self):
@@ -76,31 +117,9 @@ class ChessSiteInterface(ABC):
     def resign_game(self):
         pass
 
-class ChromeBrowser(BrowserInterface):
-    def __init__(self, user_data_dir: str, profile_directory: str):
-        #chromepath = r"C:\Users\MJakimiuk\OneDrive\Documents\py\stockfish\chromedriver.exe"    
-        self.user_data_path = Path(user_data_dir)
-        self.profile_path = Path(profile_directory)
-        
-    def configure_browser(self):
-        options = webdriver.ChromeOptions()
-        options.add_argument(f"--user-data-dir={self.user_data_path}") #e.g. C:\Users\You\AppData\Local\Google\Chrome\User Data
-        options.add_argument(f'--profile-directory={self.profile_path}') #e.g. Profile 3
-        options.add_argument("--start-maximized")
-        options.add_argument("--custom-flag=webdriver-session")
-        options.add_argument("--remote-debugging-port=2137")
-        self.options = options
-        self.driver = webdriver.Chrome(options=options)
-        return self.driver
-
-class FirefoxBrowser(BrowserInterface):
-    def __init__(self):
-        pass
-    def configure_browser(self):
-        pass
-
 class LichessSite(ChessSiteInterface):
-    def __init__(self, driver):
+    def __init__(self, driver: webdriver):
+        super().__init__(driver)
         self.driver = driver
         self.site = 'https://www.lichess.org/'
         self.click_colours_keys = {'green' : None,
@@ -171,8 +190,8 @@ class LichessSite(ChessSiteInterface):
         return self.color
 
 class ChessDotComSite(ChessSiteInterface):
-    def __init__(self, driver):
-        self.driver = driver
+    def __init__(self, driver: webdriver):
+        super().__init__(driver)
         self.site = 'https://www.chess.com/play/online/new'
         self.click_colours_keys = {
                                     'red' : None,
@@ -354,15 +373,156 @@ class Factory:
         else:
             raise ValueError(f"Unsupported site: {site_choice}")
 
+class ChessGame:
+    def __init__(self, color_perspective, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
+        self.color = color_perspective
+        self.followed_variant = []
+        self.variant_start_ply = 0
+        self.variant_followed_for_ply = 0
+        if self.color == 'white':
+            self.white_perspective = True
+        else:
+            self.white_perspective = False
+        self.piece_values = {
+            chess.PAWN: 1,
+            chess.KNIGHT: 3,
+            chess.BISHOP: 3,
+            chess.ROOK: 5,
+            chess.QUEEN: 9
+        }
+        self.white_material_score = 0
+        self.black_material_score = 0
+        self.material_diff = 0
+        self.moves = []
+        self.gameover = False
+        self.board = chess.Board(fen=start_position)
+        self.analysis = None
+        self.start_position = start_position
+        self.engine_path = engine_path
+        self.engine_options = engine_options
+        self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+        if engine_options:
+            for option, value in engine_options.items():
+                self.engine.configure({option: value})
+        self.site = site_interface
+
+    def get_san_moves(self):
+        san_moves = []
+        temp_board = chess.Board(fen=self.start_position) # Tworzenie kopii planszy
+        for move in self.board.move_stack:
+            san_moves.append(temp_board.san(move))
+            temp_board.push(move)  # Aktualizacja kopii planszy
+        return san_moves
+    
+    def make_move(self, move):
+        self.board.push_uci(move)
+        self.moves.append(move)
+        return self.board
+    
+    def is_game_synced(self):
+        board_moves = self.get_san_moves()
+        site_moves = self.site.moves
+        if len(site_moves) != len(board_moves):
+            return False
+        for i,move in enumerate(site_moves):
+            if move != board_moves[i]:
+                return False
+        return True
+
+    def sync_board(self):  
+        self.board = chess.Board(fen=self.start_position)               
+        for move in self.site.moves:
+            self.board.push_san(move)
+        self.moves = self.site.moves
+        self.white_material_score = self.get_material_score(True)
+        self.black_material_score = self.get_material_score(False)
+        return self.board
+    
+    def get_material_score(self, color: bool):
+        value = 0
+        for piece_type in self.piece_values:
+            value += len(self.board.pieces(piece_type, color)) * self.piece_values[piece_type]
+        return value
+    
+    def should_we_resign(self):
+        if self.analysis is None:
+            return False, None, None
+        if self.color == 'white':
+            material_diff = self.white_material_score - self.black_material_score
+        else:
+            material_diff = self.black_material_score - self.white_material_score
+        score = self.analysis[0]['score']
+        self.material_diff = material_diff
+        if material_diff <= -5 and self.analysis[0]['score'].relative.cp < -300:
+            return True, self.analysis[0]['score'], material_diff
+        else:
+            return False, self.analysis[0]['score'], material_diff
+    
+    def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
+        start_time = time.time()
+        # Sprawdź liczbę legalnych ruchów
+        num_legal_moves = len(list(self.board.legal_moves))
+        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
+        self.analysis = analysis
+        if multipv == 1:
+            elapsed = time.time() - start_time
+            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
+                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
+                time.sleep((time_limit-elapsed)/2)
+            self.variant_start_ply = self.board.ply() + 1
+            self.variant_followed_for_ply = 1
+            self.followed_variant = analysis[0]['pv']
+            return analysis
+        best_cp = -1e10
+        for i in range(multipv):
+            if self.color == 'white':
+                cp = analysis[i]['score'].white().cp
+            else:
+                cp = analysis[i]['score'].black().cp
+            if cp > best_cp:
+                best_cp = cp
+                best_variant = analysis[i]
+                self.analysis = best_variant
+        elapsed = time.time() - start_time
+        logging.info(f"Analysis time: {elapsed}")
+        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
+            logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
+            time.sleep((time_limit-elapsed)/2)
+        self.variant_start_ply = self.board.ply() + 1
+        self.variant_followed_for_ply = 1
+        self.followed_variant = best_variant[0]['pv']
+        return best_variant
+
+    def is_variant_followed(self):
+        try:
+            if self.board.move_stack[-1] == self.followed_variant[self.variant_followed_for_ply]:
+                return True
+            return False
+        except:
+            return False
+        
+    def is_safe_premove(self, move: chess.Move):
+        # Pobierz pole docelowe ruchu
+        target_square = move.to_square
+        
+        # Sprawdź, czy na polu docelowym znajduje się bierka Twojego koloru
+        piece_on_target = self.board.piece_at(target_square)
+        if piece_on_target and piece_on_target.color == (not self.board.turn):
+            # Sprawdź, ilu przeciwników atakuje to pole
+            attackers = self.board.attackers(self.board.turn, target_square)
+            if len(attackers) == 1:
+                return True
+        return False
+
 class ChessBoardClicker:
-    def __init__(self, driver: webdriver, site_interface: ChessSiteInterface, debug_mode: bool = True, white_perspective: bool = True, click_colours_keys: dict = None, arrow_colours_keys: dict = None, ):
+    def __init__(self, site_interface: ChessSiteInterface, chess_game: ChessGame, debug_mode: bool = True, white_perspective: bool = True):
         self.white_perspective = white_perspective
         self.debug_mode = debug_mode
         self.squares = {}
+        self.game = chess_game
         self.chessboard_contour = None
-        self.click_colours_keys = click_colours_keys
-        self.arrow_colours_keys = arrow_colours_keys
-        self.driver = driver
+        self.click_colours_keys = site_interface.click_colours_keys
+        self.arrow_colours_keys = site_interface.arrow_colours_keys
         self.site_interface = site_interface         
 
     def convert_to_chess_notation(self, row_index, column_index, is_white_perspective):
@@ -475,25 +635,16 @@ class ChessBoardClicker:
         logging.info(f"Promote to {promotion_piece}")
 
     def draw_arrow_between_random_squares(self, speed: float = 0.1, colour: str = 'red'):
-        # Get two random squares
-        start_square = random.choice(list(self.squares.keys()))
-        end_square = random.choice(list(self.squares.keys()))
-        
-        # Get the center coordinates of the squares
-        start_x, start_y = self.get_random_coordinates(self.squares[start_square])
-        end_x, end_y = self.get_random_coordinates(self.squares[end_square])
-        
-        # Draw the arrow between the squares
-        keys = self.site_interface.arrow_colours_keys[colour]
-        if keys is not None:
-            for key in keys:
-                pyautogui.keyDown(key)
-        pyautogui.moveTo(start_x, start_y, duration=speed)
-        time.sleep(0.1)
-        pyautogui.dragTo(end_x, end_y, duration=speed, button='right')
-        if keys is not None:
-            for key in keys:
-                pyautogui.keyUp(key)
+        # Temp copy of actual game board
+        tmp_board = self.game.board.copy()
+        # Change perspective (we only executing this method when it is not our move)
+        tmp_board.turn = not tmp_board.turn
+        # list of all legal moves in tmp_board
+        legal_moves = list(tmp_board.legal_moves)
+        # Choose random move
+        random_move = random.choice(legal_moves)
+        # Draw arrow with randomly chosen move
+        self.draw_arrow(str(random_move.uci()), speed, colour)        
     
     def make_move(self, move_uci: str, move_speed: float = 0.1, drag_speed: float = 0.2):
         start_square = move_uci[:2]
@@ -512,150 +663,6 @@ class ChessBoardClicker:
                 self.site_interface.promote_pawn(promotion_piece)
             except Exception as e:
                 logging.error(e)
-
-
-class ChessGame:
-    def __init__(self, color_perspective, engine_path: str, browser_interface: BrowserInterface, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
-        self.color = color_perspective
-        self.followed_variant = []
-        self.variant_start_ply = 0
-        self.variant_followed_for_ply = 0
-        if self.color == 'white':
-            self.white_perspective = True
-        else:
-            self.white_perspective = False
-        self.piece_values = {
-            chess.PAWN: 1,
-            chess.KNIGHT: 3,
-            chess.BISHOP: 3,
-            chess.ROOK: 5,
-            chess.QUEEN: 9
-        }
-        self.white_material_score = 0
-        self.black_material_score = 0
-        self.material_diff = 0
-        self.moves = []
-        self.gameover = False
-        self.board = chess.Board(fen=start_position)
-        self.analysis = None
-        self.start_position = start_position
-        self.engine_path = engine_path
-        self.engine_options = engine_options
-        self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
-        if engine_options:
-            for option, value in engine_options.items():
-                self.engine.configure({option: value})
-        self.site = site_interface
-        self.browser = browser_interface
-        self.clicker = ChessBoardClicker(debug_mode=True, white_perspective=self.white_perspective, click_colours_keys=self.site.click_colours_keys, arrow_colours_keys=self.site.arrow_colours_keys, driver=self.browser.driver, site_interface=self.site)
-
-    def get_san_moves(self):
-        san_moves = []
-        temp_board = chess.Board(fen=self.start_position) # Tworzenie kopii planszy
-        for move in self.board.move_stack:
-            san_moves.append(temp_board.san(move))
-            temp_board.push(move)  # Aktualizacja kopii planszy
-        return san_moves
-    
-    def make_move(self, move):
-        self.board.push_uci(move)
-        self.moves.append(move)
-        return self.board
-    
-    def is_game_synced(self):
-        board_moves = self.get_san_moves()
-        site_moves = self.site.moves
-        if len(site_moves) != len(board_moves):
-            return False
-        for i,move in enumerate(site_moves):
-            if move != board_moves[i]:
-                return False
-        return True
-
-    def sync_board(self):  
-        self.board = chess.Board(fen=self.start_position)               
-        for move in self.site.moves:
-            self.board.push_san(move)
-        self.moves = self.site.moves
-        self.white_material_score = self.get_material_score(True)
-        self.black_material_score = self.get_material_score(False)
-        return self.board
-    
-    def get_material_score(self, color: bool):
-        value = 0
-        for piece_type in self.piece_values:
-            value += len(self.board.pieces(piece_type, color)) * self.piece_values[piece_type]
-        return value
-    
-    def should_we_resign(self):
-        if self.analysis is None:
-            return False, None, None
-        if self.color == 'white':
-            material_diff = self.white_material_score - self.black_material_score
-        else:
-            material_diff = self.black_material_score - self.white_material_score
-        score = self.analysis[0]['score']
-        self.material_diff = material_diff
-        if material_diff <= -5 and self.analysis[0]['score'].relative.cp < -300:
-            return True, self.analysis[0]['score'], material_diff
-        else:
-            return False, self.analysis[0]['score'], material_diff
-    
-    def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
-        start_time = time.time()
-        # Sprawdź liczbę legalnych ruchów
-        num_legal_moves = len(list(self.board.legal_moves))
-        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
-        self.analysis = analysis
-        if multipv == 1:
-            elapsed = time.time() - start_time
-            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
-                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
-                time.sleep((time_limit-elapsed)/2)
-            self.variant_start_ply = self.board.ply() + 1
-            self.variant_followed_for_ply = 1
-            self.followed_variant = analysis[0]['pv']
-            return analysis
-        best_cp = -1e10
-        for i in range(multipv):
-            if self.color == 'white':
-                cp = analysis[i]['score'].white().cp
-            else:
-                cp = analysis[i]['score'].black().cp
-            if cp > best_cp:
-                best_cp = cp
-                best_variant = analysis[i]
-                self.analysis = best_variant
-        elapsed = time.time() - start_time
-        logging.info(f"Analysis time: {elapsed}")
-        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
-            logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
-            time.sleep((time_limit-elapsed)/2)
-        self.variant_start_ply = self.board.ply() + 1
-        self.variant_followed_for_ply = 1
-        self.followed_variant = best_variant[0]['pv']
-        return best_variant
-
-    def is_variant_followed(self):
-        try:
-            if self.board.move_stack[-1] == self.followed_variant[self.variant_followed_for_ply]:
-                return True
-            return False
-        except:
-            return False
-        
-    def is_safe_premove(self, move: chess.Move):
-        # Pobierz pole docelowe ruchu
-        target_square = move.to_square
-        
-        # Sprawdź, czy na polu docelowym znajduje się bierka Twojego koloru
-        piece_on_target = self.board.piece_at(target_square)
-        if piece_on_target and piece_on_target.color == (not self.board.turn):
-            # Sprawdź, ilu przeciwników atakuje to pole
-            attackers = self.board.attackers(self.board.turn, target_square)
-            if len(attackers) == 1:
-                return True
-        return False
 
 def auto_play_best_moves():
     config_dict = yaml.safe_load(open('config.yaml'))['auto_play_best_moves']
@@ -685,8 +692,9 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)    
-        game.clicker.get_squares()
+        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)   
+        clicker.get_squares()
         while not game.gameover:
             site.get_site_game_state()
             game_synced = game.is_game_synced()
@@ -705,8 +713,8 @@ def auto_play_best_moves():
                     except:
                         pass
                 if not resign:
-                    if random.random() < 0.2:
-                        game.clicker.draw_arrow_between_random_squares()
+                    if random.random() < 0.4:
+                        clicker.draw_arrow_between_random_squares()
                 continue 
             logging.info(f"It's our move. We play as {site.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
             if game.is_variant_followed() and game.variant_followed_for_ply+1<len(game.followed_variant):
@@ -728,12 +736,12 @@ def auto_play_best_moves():
                 depth_limit = 1 #if game.board.ply() > 12 else 5
                 analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
                 move_to_draw = analysis[0]['pv'][0]
-            game.clicker.make_move(move_to_draw.uci())
+            clicker.make_move(move_to_draw.uci())
             game.make_move(move_to_draw.uci())
             try:
                 if game.is_safe_premove(game.followed_variant[game.variant_followed_for_ply+1]):
                     logging.info(f"We are following variant with safe premove {game.followed_variant[game.variant_followed_for_ply+1]}, making premove.")
-                    game.clicker.make_move(game.followed_variant[game.variant_followed_for_ply+1].uci())
+                    clicker.make_move(game.followed_variant[game.variant_followed_for_ply+1].uci())
             except:
                 pass            
             logging.info(f'FEN: {game.board.fen()}')
@@ -778,8 +786,9 @@ def highlight_best_piece():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)    
-        game.clicker.get_squares()        
+        game = ChessGame(color, engine_path, browser, site, engine_options=engine_options, start_position=startposition)
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)    
+        clicker.get_squares()        
         while not game.gameover:
             site.get_site_game_state()
             game_synced = game.is_game_synced()
@@ -798,7 +807,7 @@ def highlight_best_piece():
             analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
             move_to_draw = analysis[0]['pv'][0]
             square = chess.square_name(move_to_draw.from_square)
-            game.clicker.highlight_square(square)
+            clicker.highlight_square(square)
             analyzed = True          
             logging.info(f'FEN: {game.board.fen()}')
             logging.info(f'Sugessted quare: {square}')
