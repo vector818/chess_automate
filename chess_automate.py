@@ -18,6 +18,7 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
 from selenium.common import NoSuchElementException, ElementNotInteractableException
 import chess
 import chess.engine
@@ -279,10 +280,14 @@ class ChessDotComSite(ChessSiteInterface):
         new_game_clicked = False
         while not new_game_clicked:
             try:
-                buttons = self.driver.find_elements('class name','game-over-buttons-component')
+                buttons = self.driver.find_element('class name','game-over-buttons-component').find_elements('xpath','.//*')
                 for b in buttons:
                     if 'New' in b.text or 'Accept' in b.text:
-                        b.click()
+                        try:
+                            b.click()
+                        except WebDriverException:
+                            logging.debug("Button not clickable")
+                            continue
                         self.new_game_button = b
                         break                
                 logging.info("New game button found and clicked")
@@ -290,7 +295,7 @@ class ChessDotComSite(ChessSiteInterface):
                 return True
             except:
                 pass
-            if time.time() - start > 2*60:
+            if time.time() - start > 1*60:
                 logging.error("New game button not found")
                 return False
 
