@@ -86,6 +86,7 @@ class ChessSiteInterface(ABC):
         self.clock = None
         self.gameover = None
         self.color = None
+        self.game_outcome = None
     
     @abstractmethod
     def wait_for_game(self):
@@ -278,7 +279,7 @@ class ChessDotComSite(ChessSiteInterface):
         new_game_clicked = False
         while not new_game_clicked:
             try:
-                buttons = self.driver.find_elements('class name','new-game-buttons-label')
+                buttons = self.driver.find_elements('class name','game-over-buttons-component')
                 for b in buttons:
                     if 'New' in b.text or 'Accept' in b.text:
                         b.click()
@@ -344,27 +345,22 @@ class ChessDotComSite(ChessSiteInterface):
     def get_site_game_state(self):
         self.moves = self.read_moves()
         self.clock = self.read_clock()
-        self.gameover = self.is_game_over()
+        self.gameover, self.game_outcome = self.is_game_over()
         self.get_color()
         #logging.info(f"Game state: {self.moves}, {self.clock}, {self.gameover}")
 
     def is_game_over(self):
-        elements_groups = self.driver.find_elements('xpath','//*[@id="board-layout-sidebar"]/div/div[2]/div')
-        i=1
         try:
-            for e in elements_groups:
-                if 'Rematch' in e.text:
-                    break
-                i+=1
-            buttons = self.driver.find_elements('xpath',f'//*[@id="board-layout-sidebar"]/div/div[2]/div[{i}]/button')
-            for b in buttons:
-                if 'New' in b.text:
-                    self.new_game_button = b
-                    break
-            gameover = self.new_game_button.is_displayed()
-            return gameover
-        except:
-            return False
+            game_over_element = self.driver.find_element('class name','game-over-modal-content')
+        except e:
+            is_game_over = False
+            game_outcome = None
+            return is_game_over, game_outcome
+        is_game_over = game_over_element.is_displayed()
+        result = self.driver.find_element('class name','game-over-modal-content').text
+        game_outcome = ' '.join(result.split('\n')[:2])
+        game_outcome = game_outcome
+        return is_game_over, game_outcome
         
     def resign_game(self):
         self.driver.find_element('class name','resign-button-label').click()
@@ -478,16 +474,16 @@ class ChessGame:
     
     def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
         start_time = time.time()
-        if self.opening_book is not None:
-            with chess.polyglot.open_reader(self.opening_book) as reader:
-                try:
-                    entry = reader.find(self.board)
-                    book_move = entry.move()
-                    logging.info(f"Found book move: {book_move}")
-                    analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
-                    return book_move, analysis
-                except IndexError:
-                    logging.info("No book move found, proceeding with engine analysis.")
+        # if self.opening_book is not None:
+        #     with chess.polyglot.open_reader(self.opening_book) as reader:
+        #         try:
+        #             entry = reader.find(self.board)
+        #             book_move = entry.move()
+        #             logging.info(f"Found book move: {book_move}")
+        #             analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
+        #             return book_move, analysis
+        #         except IndexError:
+        #             logging.info("No book move found, proceeding with engine analysis.")
         # Sprawdź liczbę legalnych ruchów
         num_legal_moves = len(list(self.board.legal_moves))
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
@@ -522,6 +518,40 @@ class ChessGame:
         self.followed_variant = best_variant[0]['pv']
         best_move = best_variant[0]['pv'][0]
         return best_move, best_variant
+
+    def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 10):
+        start_time = time.time()
+        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
+        best_cp = 1e10
+        for i in range(multipv):
+            if self.color == 'white':
+                cp = analysis[i]['score'].white().cp
+            else:
+                cp = analysis[i]['score'].black().cp
+            if abs(cp) < abs(best_cp):
+                best_cp = cp
+                best_variant = analysis[i]
+                self.analysis = best_variant
+                self.analysies.append(best_variant) #tutaj trzeba zmienić żeby dodawało najlepszy wariant a nie ten remisujący
+        elapsed = time.time() - start_time
+        best_move = best_variant['pv'][0]
+        logging.info(f"Analysis time: {elapsed}")
+        return best_move, best_variant
+
+    def blunder_detector(self, threshold: float = 200):
+        new_analysis = self.analysies[-1]
+        prv_analysis = self.analysies[-2]
+        if prv_analysis is None or new_analysis is None:
+            return False
+        if self.color == 'white':
+            cp = new_analysis['score'].white().cp
+            prv_cp = prv_analysis['score'].white().cp
+        else:
+            cp = new_analysis['score'].black().cp
+            prv_cp = prv_analysis['score'].black().cp
+        if prv_cp + threshold <= cp:
+            return True
+        return False
 
     def is_variant_followed(self):
         try:
@@ -717,7 +747,7 @@ def auto_play_best_moves():
     site = Factory.create_chess_site(site_choice, driver)
     driver.get(site.site)
     time.sleep(2)
-    site.start_first_game(time_control='2 | 1')
+    site.start_first_game(time_control='3 min')
     succes = site.wait_for_game()
     if not succes:
         driver.quit()
@@ -727,7 +757,7 @@ def auto_play_best_moves():
         moves = []
         color = site.get_color()
         game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_book=opening_book)
-        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False)   
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         while not game.gameover:
             site.get_site_game_state()
@@ -735,11 +765,12 @@ def auto_play_best_moves():
             if not game_synced:
                 game.sync_board()
             if site.gameover:
-                logging.info(f"Game over. We were playing as: {game.color}. Winner color: ")
+                logging.info(f"Game over. We were playing as: {game.color}. Game outcome: {site.game_outcome}")
                 break                
             on_move = 'white' if game.board.turn else 'black'
             if on_move != site.color:
                 resign, cp_score, material_diff = game.should_we_resign()
+                #resign=False
                 if resign:
                     logging.info(f"Resigning game. Material difference: {material_diff}. Score: {cp_score}")
                     try:
@@ -821,8 +852,8 @@ def highlight_best_piece():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color_perspective=color, engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
-        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)    
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)    
         clicker.get_squares()        
         while not game.gameover:
             site.get_site_game_state()
@@ -885,8 +916,8 @@ def give_non_losing_move():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(color_perspective=color, engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
-        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=False, white_perspective=True)    
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition)
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)    
         clicker.get_squares()        
         while not game.gameover:
             site.get_site_game_state()
@@ -903,14 +934,17 @@ def give_non_losing_move():
             random_think = 5
             logging.info(f"Thinking time: {random_think}. Going to analyze the position and give non losing move.")
             depth_limit = 20
-            analysis = game.find_non_losing_move(time_limit=random_think, depth_limit=depth_limit, multipv=10)
-            move_to_draw = analysis[0]['pv'][0]
-            square = chess.square_name(move_to_draw.from_square)
-            clicker.highlight_square(square)
-            analyzed = True          
+            move_to_draw, analysis = game.find_non_losing_move(time_limit=random_think, depth_limit=depth_limit, multipv=10)
+            clicker.draw_arrow(move_to_draw.uci(), colour='green')
+            analyzed = True
+            is_blunder = game.blunder_detector()
+            if is_blunder:
+                logging.info(f"Blunder detected. Try to find best move. Highlighting best piece.")
+                best_move, _ = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
+                square = chess.square_name(best_move.from_square)
+                clicker.highlight_square(square, colour='red')           
             logging.info(f'FEN: {game.board.fen()}')
-            logging.info(f'Sugessted quare: {square}')
-            logging.info(f"Score evaluation: {analysis[0]['score']}")       
+            logging.info(f"Score evaluation: {analysis['score']}")       
         game.engine.quit()
         n=0
         while driver.current_url == site.game_www and n<120:
@@ -938,10 +972,11 @@ def close_webdriver_browsers():
 
 if __name__ == "__main__":
     while True:
+        auto_play_best_moves()
         try:
-            #auto_play_best_moves()
+            auto_play_best_moves()
             #highlight_best_piece()
-            give_non_losing_move()
+            #give_non_losing_move()
         except Exception as e:
             logging.error('Unhandled exception caught')
             logging.error(e)
