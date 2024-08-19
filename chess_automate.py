@@ -320,7 +320,7 @@ class ChessDotComSite(ChessSiteInterface):
             except ValueError:
                 continue
         if t_datetime is None:
-            return timedelta(days=999999)        
+            return timedelta(seconds=30)        
         time = timedelta(hours=t_datetime.hour, minutes=t_datetime.minute, seconds=t_datetime.second, microseconds=t_datetime.microsecond)
         return time
     
@@ -391,7 +391,7 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_book: str = None):
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_book: str = None, time_control: str = '3 min'):
         self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -424,6 +424,16 @@ class ChessGame:
             for option, value in engine_options.items():
                 self.engine.configure({option: value})
         self.site = site_interface
+        total_time, increment = self.parse_time_control(time_control)
+        expected_moves = 45
+        self.expected_moves = expected_moves
+        risk_factor = 0.2
+        # Oblicz średni czas na ruch
+        self.avg_time_per_move = (total_time + expected_moves * increment) / expected_moves        
+        # Odchylenie standardowe
+        self.sigma = risk_factor * self.avg_time_per_move        
+        # Zapisz całkowity dostępny czas
+        self.total_time = total_time
 
     def get_san_moves(self):
         san_moves = []
@@ -496,8 +506,8 @@ class ChessGame:
         if multipv == 1:
             elapsed = time.time() - start_time
             if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
-                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
-                time.sleep((time_limit-elapsed)/2)
+                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
+                time.sleep((time_limit-elapsed))
             self.variant_start_ply = self.board.ply() + 1
             self.variant_followed_for_ply = 1
             self.followed_variant = analysis[0]['pv']
@@ -516,8 +526,8 @@ class ChessGame:
         elapsed = time.time() - start_time
         logging.info(f"Analysis time: {elapsed}")
         if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
-            logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)/2} seconds")
-            time.sleep((time_limit-elapsed)/2)
+            logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
+            time.sleep((time_limit-elapsed))
         self.variant_start_ply = self.board.ply() + 1
         self.variant_followed_for_ply = 1
         self.followed_variant = best_variant[0]['pv']
@@ -578,6 +588,36 @@ class ChessGame:
             if len(attackers) == 1:
                 return True
         return False
+    
+    def parse_time_control(self, time_control: str):
+        # Sprawdzenie formatu z inkrementem: np. '3 | 1'
+        if '|' in time_control:
+            parts = time_control.split('|')
+            minutes = int(parts[0].strip())
+            self.increment = int(parts[1].strip())
+            self.total_time = minutes * 60
+            logging.info(f"Time control: Total time: {self.total_time}, increment: {self.increment}")
+            return self.total_time, self.increment
+        # Sprawdzenie formatu bez inkrementu: np. '3 min' lub '10 min'
+        elif 'min' in time_control:
+            minutes = int(re.findall(r'\d+', time_control)[0])
+            self.total_time = minutes * 60
+            self.increment = 0
+            logging.info(f"Time control: Total time: {self.total_time}, increment: {self.increment}")
+            return self.total_time, self.increment
+        # Jeśli format jest nieznany, zwracamy None
+        else:
+            raise ValueError(f"Nieznany format kontroli czasowej: {time_control}")
+        
+    def generate_move_time(self):
+        # Losowanie czasu ruchu z zapisanego rozkładu normalnego
+        move_time = random.gauss(self.avg_time_per_move, self.sigma)
+        
+        # Ograniczenie czasów ruchu do pewnych granic
+        move_time = max(0, move_time)  # Minimalny czas na ruch to 1 sekunda
+        max_time = self.site.clock.total_seconds() / 2  # Maksymalny czas na ruch to połowa dostępnego czasu
+        move_time = min(move_time, max_time)  # Maksymalny czas to połowa dostępnego czasu
+        return move_time
 
 class ChessBoardClicker:
     def __init__(self, site_interface: ChessSiteInterface, chess_game: ChessGame, debug_mode: bool = True):
@@ -752,7 +792,8 @@ def auto_play_best_moves():
     site = Factory.create_chess_site(site_choice, driver)
     driver.get(site.site)
     time.sleep(2)
-    site.start_first_game(time_control='3 min')
+    time_control = config_dict['time_control']
+    site.start_first_game(time_control=time_control)
     succes = site.wait_for_game()
     if not succes:
         driver.quit()
@@ -799,13 +840,14 @@ def auto_play_best_moves():
                 move_to_draw = game.followed_variant[game.variant_followed_for_ply]
                 game.variant_followed_for_ply += 1
             else:
-                random_think = round(random.normalvariate(1.5, 1.5),4)
-                random_think = 0 if random_think < 0 else random_think
-                random_think = 0 if game.board.ply() < 2 else random_think
+                random_think = game.generate_move_time()
                 random_think = 0 if site.clock < timedelta(seconds=15) else random_think
-                logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move.")
+                logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move. Board position: {game.board.fen()}")
                 depth_limit = 1 #if game.board.ply() > 12 else 5
-                move_to_draw, analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
+                if game.board.is_checkmate() == False:
+                    move_to_draw, analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
+                else:
+                    continue
             clicker.make_move(move_to_draw.uci())
             game.make_move(move_to_draw.uci())
             try:
@@ -814,7 +856,6 @@ def auto_play_best_moves():
                     clicker.make_move(game.followed_variant[game.variant_followed_for_ply+1].uci())
             except:
                 pass            
-            logging.info(f'FEN: {game.board.fen()}')
             logging.info(f'Sugessted move: {move_to_draw.uci()}')
             logging.info(f"Score evaluation: {analysis[0]['score']} | Material diff: {game.material_diff}")       
         time.sleep(random.randint(5,10))
@@ -977,7 +1018,7 @@ def close_webdriver_browsers():
 
 if __name__ == "__main__":
     while True:
-        auto_play_best_moves()
+        #auto_play_best_moves()
         try:
             auto_play_best_moves()
             #highlight_best_piece()
