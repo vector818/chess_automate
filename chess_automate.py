@@ -493,7 +493,7 @@ class ChessGame:
             material_diff = self.black_material_score - self.white_material_score
         score = self.analysis[0]['score']
         self.material_diff = material_diff
-        if material_diff <= -5 and self.analysis[0]['score'].relative.cp < -150:
+        if (material_diff <= -5 and self.analysis[0]['score'].relative.cp < -150) or self.analysis[0]['score'].relative.cp < -200:
             return True, self.analysis[0]['score'], material_diff
         else:
             return False, self.analysis[0]['score'], material_diff
