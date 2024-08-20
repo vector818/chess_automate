@@ -369,6 +369,7 @@ class ChessDotComSite(ChessSiteInterface):
         
     def resign_game(self):
         self.driver.find_element('class name','resign-button-label').click()
+        time.sleep(2)
 
 class Factory:
     
@@ -425,11 +426,12 @@ class ChessGame:
                 self.engine.configure({option: value})
         self.site = site_interface
         total_time, increment = self.parse_time_control(time_control)
-        expected_moves = 45
+        expected_moves = 90
         self.expected_moves = expected_moves
         risk_factor = 0.2
+        self.risk_factor = risk_factor
         # Oblicz średni czas na ruch
-        self.avg_time_per_move = (total_time + expected_moves * increment) / expected_moves        
+        self.avg_time_per_move = ((total_time + expected_moves * increment) / expected_moves)        
         # Odchylenie standardowe
         self.sigma = risk_factor * self.avg_time_per_move        
         # Zapisz całkowity dostępny czas
@@ -482,7 +484,7 @@ class ChessGame:
             material_diff = self.black_material_score - self.white_material_score
         score = self.analysis[0]['score']
         self.material_diff = material_diff
-        if material_diff <= -5 and self.analysis[0]['score'].relative.cp < -300:
+        if material_diff <= -5 and self.analysis[0]['score'].relative.cp < -150:
             return True, self.analysis[0]['score'], material_diff
         else:
             return False, self.analysis[0]['score'], material_diff
@@ -505,7 +507,7 @@ class ChessGame:
         self.analysis = analysis
         if multipv == 1:
             elapsed = time.time() - start_time
-            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
+            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
                 logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
                 time.sleep((time_limit-elapsed))
             self.variant_start_ply = self.board.ply() + 1
@@ -525,7 +527,7 @@ class ChessGame:
                 self.analysis = best_variant
         elapsed = time.time() - start_time
         logging.info(f"Analysis time: {elapsed}")
-        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit:
+        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
             logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
             time.sleep((time_limit-elapsed))
         self.variant_start_ply = self.board.ply() + 1
@@ -802,7 +804,7 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_book=opening_book)
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_book=opening_book, time_control=time_control)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         while not game.gameover:
@@ -841,7 +843,7 @@ def auto_play_best_moves():
                 game.variant_followed_for_ply += 1
             else:
                 random_think = game.generate_move_time()
-                random_think = 0 if site.clock < timedelta(seconds=15) else random_think
+                random_think = 0 if site.clock < timedelta(seconds=45) else random_think
                 logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move. Board position: {game.board.fen()}")
                 depth_limit = 1 #if game.board.ply() > 12 else 5
                 if game.board.is_checkmate() == False:
