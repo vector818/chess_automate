@@ -392,7 +392,7 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_book: str = None, time_control: str = '3 min'):
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None, time_control: str = '3 min'):
         self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -420,7 +420,16 @@ class ChessGame:
         self.engine_path = engine_path
         self.engine_options = engine_options
         self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
-        self.opening_book = opening_book
+        if opening_books_dir:
+            self.opening_books_readers = []
+            self.opening_books_path = os.path(opening_books_dir)
+            for file in os.listdir(opening_books_dir):
+                if file.endswith('.bin'):
+                    opening_book_path = os.path.join(opening_books_dir, file)
+                    self.opening_books_readers.append(chess.polyglot.open_reader(opening_book_path))
+        else:
+            self.opening_books_readers = None
+            self.opening_books_path = None
         if engine_options:
             for option, value in engine_options.items():
                 self.engine.configure({option: value})
@@ -491,16 +500,16 @@ class ChessGame:
     
     def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
         start_time = time.time()
-        # if self.opening_book is not None:
-        #     with chess.polyglot.open_reader(self.opening_book) as reader:
-        #         try:
-        #             entry = reader.find(self.board)
-        #             book_move = entry.move()
-        #             logging.info(f"Found book move: {book_move}")
-        #             analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
-        #             return book_move, analysis
-        #         except IndexError:
-        #             logging.info("No book move found, proceeding with engine analysis.")
+        if self.opening_books_readers is not None:
+            for opening_book_reader in self.opening_books_readers:
+                try:
+                    entry = opening_book_reader.find(self.board)
+                    book_move = entry.move()
+                    logging.info(f"Found book move: {book_move}")
+                    analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
+                    return book_move, analysis
+                except IndexError:
+                    logging.info("No book move found, proceeding with engine analysis.")
         # Sprawdź liczbę legalnych ruchów
         num_legal_moves = len(list(self.board.legal_moves))
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
