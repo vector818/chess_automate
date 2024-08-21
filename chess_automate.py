@@ -422,7 +422,7 @@ class ChessGame:
         self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
         if opening_books_dir:
             self.opening_books_readers = []
-            self.opening_books_path = os.path(opening_books_dir)
+            self.opening_books_path = os.path.abspath(opening_books_dir)
             for file in os.listdir(opening_books_dir):
                 if file.endswith('.bin'):
                     opening_book_path = os.path.join(opening_books_dir, file)
@@ -500,16 +500,18 @@ class ChessGame:
     
     def find_best_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 5, wait_for_time_limit: bool = True):
         start_time = time.time()
-        if self.opening_books_readers is not None:
-            for opening_book_reader in self.opening_books_readers:
-                try:
-                    entry = opening_book_reader.find(self.board)
-                    book_move = entry.move()
-                    logging.info(f"Found book move: {book_move}")
-                    analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
-                    return book_move, analysis
-                except IndexError:
-                    logging.info("No book move found, proceeding with engine analysis.")
+        if self.board.ply() < 15:
+            if self.opening_books_readers is not None:
+                logging.info("Searching opening book")
+                for opening_book_reader in self.opening_books_readers:
+                    try:
+                        entry = opening_book_reader.find(self.board)
+                        book_move = entry.move
+                        logging.info(f"Found book move: {book_move}")
+                        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=1, depth=depth_limit),multipv=1)
+                        return book_move, analysis
+                    except IndexError:
+                        logging.info("No book move found, proceeding with engine analysis.")
         # Sprawdź liczbę legalnych ruchów
         num_legal_moves = len(list(self.board.legal_moves))
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
@@ -813,7 +815,7 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_book=opening_book, time_control=time_control)
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, time_control=time_control, opening_books_dir=opening_book)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         while not game.gameover:
