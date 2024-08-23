@@ -558,10 +558,8 @@ class ChessGame:
         best_cp = 1e10
         self.analysies.append(analysis[0])
         for i in range(len(analysis)):
-            if self.color == 'white':
-                cp = analysis[i]['score'].white().cp
-            else:
-                cp = analysis[i]['score'].black().cp            
+            score = analysis[i]['score']
+            cp = self.get_cp_score(score)           
             if abs(cp) < abs(best_cp):
                 best_cp = cp
                 best_variant = analysis[i]
@@ -573,20 +571,27 @@ class ChessGame:
 
     def blunder_detector(self, threshold: float = 200):
         if len(self.analysies) < 2:
-            return False
+            return False        
         new_analysis = self.analysies[-1]
         prv_analysis = self.analysies[-2]
         if prv_analysis is None or new_analysis is None:
             return False
-        if self.color == 'white':
-            cp = new_analysis['score'].white().cp
-            prv_cp = prv_analysis['score'].white().cp
-        else:
-            cp = new_analysis['score'].black().cp
-            prv_cp = prv_analysis['score'].black().cp
+        cp = self.get_cp_score(new_analysis['score'])
+        prv_cp = self.get_cp_score(prv_analysis['score'])
         if prv_cp + threshold <= cp:
             return True
         return False
+    
+    def get_cp_score(self, score: chess.engine.PovScore):
+        if self.color == 'white':
+            pov_score = score.white()
+        else:
+            pov_score = score.black()
+        if isinstance(score.relative, chess.engine.Mate):
+            cp = int(1/pov_score.mate() * 1000000)
+        else:
+            cp = pov_score.cp
+        return cp
 
     def is_variant_followed(self):
         try:
@@ -754,7 +759,7 @@ class ChessBoardClicker:
             for key in keys:
                 pyautogui.keyDown(key)
         pyautogui.moveTo(start_x, start_y, duration=speed)
-        time.sleep(0.1)
+        time.sleep(0.05)
         pyautogui.dragTo(end_x, end_y, duration=speed, button='right')
         if keys is not None:
             for key in keys:
@@ -981,7 +986,7 @@ def give_non_losing_move():
     if not succes:
         driver.quit()
         return    
-    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' #'k7/8/8/8/8/1R6/1Q6/K7 w - - 0 1'# 
     analyzed = False
     while True:
         moves = []
@@ -1005,15 +1010,17 @@ def give_non_losing_move():
             logging.info(f"Thinking time: {think}. Going to analyze the position and give non losing move.")
             depth_limit = 20
             move_to_draw, analysis = game.find_non_losing_move(time_limit=think, depth_limit=depth_limit, multipv=10)
-            logging.info(f'Sugessted not losing move: {move_to_draw.uci()}')
-            clicker.draw_arrow(move_to_draw.uci(), colour='green')
             analyzed = True
-            is_blunder = game.blunder_detector()
+            is_blunder = game.blunder_detector(threshold=150)
             if is_blunder:
+                logging.warning("============ BLUNDER DETECTED !!! ============")
                 logging.info(f"Blunder detected. Try to find best move. Highlighting best piece.")
-                best_move, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
+                best_move = game.analysies[-1]['pv'][0]
+                #best_move, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
                 square = chess.square_name(best_move.from_square)
-                clicker.highlight_square(square, colour='red')           
+                clicker.highlight_square(square, colour='red')
+            logging.info(f'Sugessted not losing move: {move_to_draw.uci()}')
+            clicker.draw_arrow(move_to_draw.uci(), colour='green', speed=0.4)           
             logging.info(f'FEN: {game.board.fen()}')
             logging.info(f"Score evaluation after non losing move: {analysis['score']}")
             try:
