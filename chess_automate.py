@@ -26,6 +26,8 @@ import chess.polyglot
 from random import random
 from datetime import datetime,timedelta
 import time
+import keyboard
+import threading
 
 from logging import FileHandler, StreamHandler
 from logging.handlers import RotatingFileHandler
@@ -819,6 +821,10 @@ def auto_play_best_moves():
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         while not game.gameover:
+            if stop_program:
+                game.engine.quit()
+                driver.quit()
+                return
             site.get_site_game_state()
             game_synced = game.is_game_synced()
             if not game_synced:
@@ -827,7 +833,7 @@ def auto_play_best_moves():
                 logging.info(f"Game over. We were playing as: {game.color}. Game outcome: {site.game_outcome}")
                 break                
             on_move = 'white' if game.board.turn else 'black'
-            if on_move != site.color:
+            if on_move != site.color or paused == True:
                 resign, cp_score, material_diff = game.should_we_resign()
                 #resign=False
                 if resign:
@@ -837,7 +843,7 @@ def auto_play_best_moves():
                     except:
                         pass
                 if not resign:
-                    if random.random() < 0.1 and game.board.ply() > 2:
+                    if random.random() > 0.95 and game.board.ply() > 2 and paused == False:
                         logging.info(f"Drawing random arrow because it's not out move, we play as {game.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
                         clicker.draw_arrow_between_random_squares()
                 continue 
@@ -1029,8 +1035,34 @@ def close_webdriver_browsers():
                 logging.info(f"Zamykanie procesu przeglądarki {process.info['name']} o PID {process.info['pid']}")
                 process.terminate()
 
+def keyboard_listener():
+    global paused, stop_program
+    # Klawisz 'p' do pauzowania/wznawiania
+    keyboard.add_hotkey('p', toggle_pause)
+    # Klawisz 'q' do zatrzymywania programu
+    keyboard.add_hotkey('q', stop)
+
+def toggle_pause():
+    global paused
+    paused = not paused
+    state = "zapauzowany" if paused else "wznowiony"
+    logging.info(f"Program {state}.")
+
+def stop():
+    global stop_program
+    stop_program = True
+    logging.info("Program zakończony.")
+    keyboard.unhook_all_hotkeys()
+
+# Zmienne globalne
+paused = False
+stop_program = False
+
 if __name__ == "__main__":
-    while True:
+    # Uruchomienie wątku nasłuchującego klawiatury
+    listener_thread = threading.Thread(target=keyboard_listener, daemon=True)
+    listener_thread.start()
+    while stop_program == False:
         #auto_play_best_moves()
         try:
             auto_play_best_moves()
@@ -1042,6 +1074,8 @@ if __name__ == "__main__":
             logging.error(traceback.format_exc())
             close_webdrivers()
             close_webdriver_browsers()
+            listener_thread.join()
             os._exit(1)
+    listener_thread.join()
 
         
