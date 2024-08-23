@@ -1,17 +1,20 @@
 ﻿# Zdefiniuj ścieżkę do środowiska wirtualnego (venv)
-$venvPath = "C:\Users\micha\OneDrive\Documents\py\chess_automate\.venv\Scripts\Activate.ps1"
+$venvPath = "C:\Users\mjakimiuk\OneDrive - PEX PharmaSequence Sp z o.o\Dokumenty\python\chess_automate\.venv\Scripts\Activate.ps1"
 
 # Zdefiniuj wzorzec do wyszukiwania w ścieżce wykonywalnej
 $pattern = "*chess_automate*"
 
 # Zdefiniuj ścieżkę do skryptu Pythona, który ma być uruchamiany, jeśli proces nie działa
-$pythonScriptPath = "C:\Users\micha\OneDrive\Documents\py\chess_automate\chess_automate.py"
+$pythonScriptDir = "C:\Users\mjakimiuk\OneDrive - PEX PharmaSequence Sp z o.o\Dokumenty\python\chess_automate"
+$pythonScriptPath = "C:\Users\mjakimiuk\OneDrive - PEX PharmaSequence Sp z o.o\Dokumenty\python\chess_automate\chess_automate.py"
 
 # Aktywuj środowisko wirtualne
 & $venvPath
 
 # Czas w sekundach pomiędzy sprawdzeniami
 $checkInterval = 10
+
+cd $pythonScriptDir
 
 Start-Sleep -Seconds $checkInterval
 

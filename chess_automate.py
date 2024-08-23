@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 import sys
 import psutil
+import keyboard
+import threading
 import traceback
 import os
 import re
@@ -142,6 +144,7 @@ class LichessSite(ChessSiteInterface):
         #driver = webdriver.Chrome(executable_path=chromepath)
         waiter = WebDriverWait(self.driver, 600)
         waiter.until(EC.presence_of_element_located((By.XPATH,'//*[@id="main-wrap"]/main/div[1]/rm6/div[1]')))
+        self.game_www = self.driver.current_url
         return self.driver
     
     def promote_pawn(self, promotion_piece):        
@@ -547,26 +550,28 @@ class ChessGame:
         best_move = best_variant[0]['pv'][0]
         return best_move, best_variant
 
-    def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 1, multipv: int = 10):
+    def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 10, multipv: int = 10):
         start_time = time.time()
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
         best_cp = 1e10
-        for i in range(multipv):
+        self.analysies.append(analysis[0])
+        for i in range(len(analysis)):
             if self.color == 'white':
                 cp = analysis[i]['score'].white().cp
             else:
-                cp = analysis[i]['score'].black().cp
+                cp = analysis[i]['score'].black().cp            
             if abs(cp) < abs(best_cp):
                 best_cp = cp
                 best_variant = analysis[i]
-                self.analysis = best_variant
-                self.analysies.append(best_variant) #tutaj trzeba zmienić żeby dodawało najlepszy wariant a nie ten remisujący
+                self.analysis = best_variant                
         elapsed = time.time() - start_time
         best_move = best_variant['pv'][0]
         logging.info(f"Analysis time: {elapsed}")
         return best_move, best_variant
 
     def blunder_detector(self, threshold: float = 200):
+        if len(self.analysies) < 2:
+            return False
         new_analysis = self.analysies[-1]
         prv_analysis = self.analysies[-2]
         if prv_analysis is None or new_analysis is None:
@@ -990,20 +995,25 @@ def give_non_losing_move():
             if on_move != site.color or analyzed:
                 continue 
             logging.info(f"It's our move.")            
-            random_think = 5
-            logging.info(f"Thinking time: {random_think}. Going to analyze the position and give non losing move.")
+            think = 10
+            logging.info(f"Thinking time: {think}. Going to analyze the position and give non losing move.")
             depth_limit = 20
-            move_to_draw, analysis = game.find_non_losing_move(time_limit=random_think, depth_limit=depth_limit, multipv=10)
+            move_to_draw, analysis = game.find_non_losing_move(time_limit=think, depth_limit=depth_limit, multipv=10)
+            logging.info(f'Sugessted not losing move: {move_to_draw.uci()}')
             clicker.draw_arrow(move_to_draw.uci(), colour='green')
             analyzed = True
             is_blunder = game.blunder_detector()
             if is_blunder:
                 logging.info(f"Blunder detected. Try to find best move. Highlighting best piece.")
-                best_move, _ = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
+                best_move, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
                 square = chess.square_name(best_move.from_square)
                 clicker.highlight_square(square, colour='red')           
             logging.info(f'FEN: {game.board.fen()}')
-            logging.info(f"Score evaluation: {analysis['score']}")       
+            logging.info(f"Score evaluation after non losing move: {analysis['score']}")
+            try:
+                logging.info(f"Objective evaluation of position: {game.analysies[-1]['score']}")       
+            except:
+                pass
         game.engine.quit()
         n=0
         while driver.current_url == site.game_www and n<120:
@@ -1032,12 +1042,13 @@ def close_webdriver_browsers():
 if __name__ == "__main__":
     while True:
         #auto_play_best_moves()
+        #highlight_best_piece()
+        give_non_losing_move()
         try:
-            auto_play_best_moves()
-            #highlight_best_piece()
-            #give_non_losing_move()
+            pass
+            #auto_play_best_moves()
         except Exception as e:
-            logging.error('Unhandled exception caught')
+            logging.error('Critical exception caught')
             logging.error(e)
             logging.error(traceback.format_exc())
             close_webdrivers()
