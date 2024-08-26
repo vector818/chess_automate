@@ -30,6 +30,8 @@ from datetime import datetime,timedelta
 import time
 import keyboard
 import threading
+import uuid
+import csv
 
 from logging import FileHandler, StreamHandler
 from logging.handlers import RotatingFileHandler
@@ -92,6 +94,7 @@ class ChessSiteInterface(ABC):
         self.gameover = None
         self.color = None
         self.game_outcome = None
+        self.game_stats_file = None
     
     @abstractmethod
     def wait_for_game(self):
@@ -221,6 +224,7 @@ class ChessDotComSite(ChessSiteInterface):
                                 'blue': ['alt']
                                 }
         self.game_www = None
+        self.game_stats_file = 'logs/chesscom_game_stats.csv'
         
     def wait_for_game(self):
         #driver = webdriver.Chrome(executable_path=chromepath)
@@ -357,6 +361,17 @@ class ChessDotComSite(ChessSiteInterface):
         self.clock = self.read_clock()
         self.gameover, self.game_outcome = self.is_game_over()
         self.get_color()
+        if self.gameover:
+            game_id = uuid.uuid4()
+            row_to_append = [game_id, self.game_outcome, len(self.moves), self.game_www, datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]]
+            # Sprawdzenie, czy plik istnieje
+            file_exists = os.path.isfile(self.game_stats_file)            
+            with open(self.game_stats_file,'a', newline='') as f:
+                writer = csv.writer(f)
+                if not file_exists:
+                    headers = ['Game_ID', 'Outcome', 'Move_Count', 'Game_URL', 'Timestamp']
+                    writer.writerow(headers)
+                writer.writerow(row_to_append)
         #logging.info(f"Game state: {self.moves}, {self.clock}, {self.gameover}")
 
     def is_game_over(self):
@@ -1080,9 +1095,9 @@ if __name__ == "__main__":
     listener_thread = threading.Thread(target=keyboard_listener, daemon=True)
     listener_thread.start()
     while stop_program == False:
-        #auto_play_best_moves()
+        auto_play_best_moves()
         #highlight_best_piece()
-        give_non_losing_move()
+        #give_non_losing_move()
         try:
             pass
             #auto_play_best_moves()
