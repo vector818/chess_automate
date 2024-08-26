@@ -547,27 +547,26 @@ class ChessGame:
             self.variant_followed_for_ply = 1
             self.followed_variant = analysis[0]['pv']
             best_move = analysis[0]['pv'][0]
-            return best_move, analysis
-        best_cp = -1e10
-        for i in range(multipv):
-            if self.color == 'white':
-                cp = analysis[i]['score'].white().cp
-            else:
-                cp = analysis[i]['score'].black().cp
-            if cp > best_cp:
-                best_cp = cp
-                best_variant = analysis[i]
-                self.analysis = best_variant
-        elapsed = time.time() - start_time
-        logging.info(f"Analysis time: {elapsed}")
-        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
-            logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
-            time.sleep((time_limit-elapsed))
-        self.variant_start_ply = self.board.ply() + 1
-        self.variant_followed_for_ply = 1
-        self.followed_variant = best_variant[0]['pv']
-        best_move = best_variant[0]['pv'][0]
-        return best_move, best_variant
+        else:
+            best_variant = analysis[0]
+            self.analysis = best_variant
+            elapsed = time.time() - start_time
+            logging.info(f"Analysis time: {elapsed}")
+            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
+                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
+                time.sleep((time_limit-elapsed))
+            self.variant_start_ply = self.board.ply() + 1
+            self.variant_followed_for_ply = 1
+            self.followed_variant = best_variant[0]['pv']
+            best_move = best_variant[0]['pv'][0]
+            analysis = best_variant
+        draw = self.check_threefold_repetition(best_move)
+        if draw and self.site.clock.total_seconds() > 20:
+            logging.warning(f"Given move {best_move} leads to threefold repetition. Performing deeper analysis.")
+            analysis = self.engine.analyse(self.board, chess.engine.Limit(time=10, depth=20),multipv=1)
+            best_move = analysis[0]['pv'][0]
+            logging.warning(f"Best move after deeper analysis: {best_move}")
+        return best_move, analysis
 
     def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 10, multipv: int = 10):
         start_time = time.time()
@@ -660,6 +659,19 @@ class ChessGame:
         max_time = self.site.clock.total_seconds() / 2  # Maksymalny czas na ruch to połowa dostępnego czasu
         move_time = min(move_time, max_time)  # Maksymalny czas to połowa dostępnego czasu
         return move_time
+    
+    def check_threefold_repetition(self, move: chess.Move):
+        # Tworzymy kopię planszy, aby nie zmieniać oryginalnego obiektu board
+        board_copy = self.board.copy()        
+        # Wykonujemy ruch na kopii planszy
+        board_copy.push(move)        
+        # Sprawdzamy, czy wynik gry po tym ruchu to remis przez trzykrotne powtórzenie pozycji
+        outcome = board_copy.outcome(claim_draw=True)        
+        # Sprawdzamy, czy wynik jest remisowy i czy jest to spowodowane trzykrotnym powtórzeniem pozycji
+        if outcome and outcome.termination.name == 'THREEFOLD_REPETITION':
+            return True
+        else:
+            return False
 
 class ChessBoardClicker:
     def __init__(self, site_interface: ChessSiteInterface, chess_game: ChessGame, debug_mode: bool = True):
