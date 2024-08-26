@@ -1013,9 +1013,9 @@ def give_non_losing_move():
             analyzed = True
             is_blunder = game.blunder_detector(threshold=150)
             if is_blunder:
-                logging.warning("============ BLUNDER DETECTED !!! ============")
-                logging.info(f"Blunder detected. Try to find best move. Highlighting best piece.")
                 best_move = game.analysies[-1]['pv'][0]
+                logging.warning("============ BLUNDER DETECTED !!! ============")
+                logging.info(f"Blunder detected. Try to find best move. Highlighting best piece. Square: {chess.square_name(best_move.from_square)}")                
                 #best_move, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
                 square = chess.square_name(best_move.from_square)
                 clicker.highlight_square(square, colour='red')
