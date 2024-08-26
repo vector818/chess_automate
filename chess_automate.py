@@ -95,6 +95,7 @@ class ChessSiteInterface(ABC):
         self.color = None
         self.game_outcome = None
         self.game_stats_file = None
+        self.time_control = None
     
     @abstractmethod
     def wait_for_game(self):
@@ -267,8 +268,9 @@ class ChessDotComSite(ChessSiteInterface):
         time_buttons = self.driver.find_elements('class name','time-selector-button-button')
         for b in time_buttons:
             if kwargs['time_control'] in b.text:
+                self.time_control = b.text
                 b.click()
-                clicked = True
+                clicked = True                
                 break
         if not clicked:
             logging.error("Time control not found")
@@ -363,13 +365,13 @@ class ChessDotComSite(ChessSiteInterface):
         self.get_color()
         if self.gameover:
             game_id = uuid.uuid4()
-            row_to_append = [game_id, self.game_outcome, len(self.moves), self.game_www, datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]]
+            row_to_append = [game_id, self.time_control, self.game_outcome, len(self.moves), self.game_www, datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]]
             # Sprawdzenie, czy plik istnieje
             file_exists = os.path.isfile(self.game_stats_file)            
             with open(self.game_stats_file,'a', newline='') as f:
                 writer = csv.writer(f)
                 if not file_exists:
-                    headers = ['Game_ID', 'Outcome', 'Move_Count', 'Game_URL', 'Timestamp']
+                    headers = ['Game_ID', 'Time_control', 'Outcome', 'Move_Count', 'Game_URL', 'Timestamp']
                     writer.writerow(headers)
                 writer.writerow(row_to_append)
         #logging.info(f"Game state: {self.moves}, {self.clock}, {self.gameover}")
