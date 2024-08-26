@@ -84,8 +84,11 @@ class FirefoxBrowser(BrowserInterface):
 
 class ChessSiteInterface(ABC):
 
-    def __init__(self,driver: webdriver):
+    def __init__(self,driver: webdriver, time_control: str):
         self.driver = driver
+        self.object_id = uuid.uuid4()
+        self.time_control = time_control
+        self.total_time, self.increment = self.parse_time_control()
         self.site = None
         self.click_colours_keys = None
         self.arrow_colours_keys = None
@@ -94,9 +97,28 @@ class ChessSiteInterface(ABC):
         self.gameover = None
         self.color = None
         self.game_outcome = None
-        self.game_stats_file = None
-        self.time_control = None
+        self.game_stats_file = None    
     
+    def parse_time_control(self):
+        # Sprawdzenie formatu z inkrementem: np. '3 | 1'
+        if '|' in self.time_control:
+            parts = self.time_control.split('|')
+            minutes = int(parts[0].strip())
+            self.increment = int(parts[1].strip())
+            self.total_time = minutes * 60
+            logging.info(f"Time control: Total time: {self.total_time}, increment: {self.increment}")
+            return self.total_time, self.increment
+        # Sprawdzenie formatu bez inkrementu: np. '3 min' lub '10 min'
+        elif 'min' in self.time_control:
+            minutes = int(re.findall(r'\d+', self.time_control)[0])
+            self.total_time = minutes * 60
+            self.increment = 0
+            logging.info(f"Time control: Total time: {self.total_time}, increment: {self.increment}")
+            return self.total_time, self.increment
+        # Jeśli format jest nieznany, zwracamy None
+        else:
+            raise ValueError(f"Nieznany format kontroli czasowej: {self.time_control}")
+
     @abstractmethod
     def wait_for_game(self):
         pass
@@ -130,8 +152,8 @@ class ChessSiteInterface(ABC):
         pass
 
 class LichessSite(ChessSiteInterface):
-    def __init__(self, driver: webdriver):
-        super().__init__(driver)
+    def __init__(self, driver: webdriver, time_control: str):
+        super().__init__(driver, time_control)
         self.driver = driver
         self.site = 'https://www.lichess.org/'
         self.click_colours_keys = {'green' : None,
@@ -209,8 +231,8 @@ class LichessSite(ChessSiteInterface):
         pass
 
 class ChessDotComSite(ChessSiteInterface):
-    def __init__(self, driver: webdriver):
-        super().__init__(driver)
+    def __init__(self, driver: webdriver, time_control: str):
+        super().__init__(driver, time_control)
         self.site = 'https://www.chess.com/play/online/new'
         self.click_colours_keys = {
                                     'red' : None,
@@ -365,13 +387,14 @@ class ChessDotComSite(ChessSiteInterface):
         self.get_color()
         if self.gameover:
             game_id = uuid.uuid4()
-            row_to_append = [game_id, self.time_control, self.game_outcome, len(self.moves), self.game_www, datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]]
+            Run_ID = self.object_id
+            row_to_append = [Run_ID, game_id, self.time_control, self.total_time, self.increment, self.game_outcome, len(self.moves), self.game_www, datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]]
             # Sprawdzenie, czy plik istnieje
             file_exists = os.path.isfile(self.game_stats_file)            
             with open(self.game_stats_file,'a', newline='') as f:
                 writer = csv.writer(f)
                 if not file_exists:
-                    headers = ['Game_ID', 'Time_control', 'Outcome', 'Move_Count', 'Game_URL', 'Timestamp']
+                    headers = ['Run_ID', 'Game_ID', 'Time_control', 'Total_sec', 'Increment', 'Outcome', 'Move_Count', 'Game_URL', 'Timestamp']
                     writer.writerow(headers)
                 writer.writerow(row_to_append)
         #logging.info(f"Game state: {self.moves}, {self.clock}, {self.gameover}")
@@ -405,16 +428,16 @@ class Factory:
             raise ValueError(f"Unsupported browser: {browser_choice}")
     
     @staticmethod
-    def create_chess_site(site_choice, driver):
+    def create_chess_site(site_choice, driver, time_control: str):
         if site_choice.lower() == 'chess.com':
-            return ChessDotComSite(driver)
+            return ChessDotComSite(driver, time_control)
         elif site_choice.lower() == 'lichess.org':
-            return LichessSite(driver)
+            return LichessSite(driver, time_control)
         else:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None, time_control: str = '3 min'):
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None):
         self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -456,7 +479,8 @@ class ChessGame:
             for option, value in engine_options.items():
                 self.engine.configure({option: value})
         self.site = site_interface
-        total_time, increment = self.parse_time_control(time_control)
+        total_time = site_interface.total_time
+        increment = site_interface.increment
         expected_moves = 90
         self.expected_moves = expected_moves
         risk_factor = 0.2
@@ -624,26 +648,6 @@ class ChessGame:
             if len(attackers) == 1:
                 return True
         return False
-    
-    def parse_time_control(self, time_control: str):
-        # Sprawdzenie formatu z inkrementem: np. '3 | 1'
-        if '|' in time_control:
-            parts = time_control.split('|')
-            minutes = int(parts[0].strip())
-            self.increment = int(parts[1].strip())
-            self.total_time = minutes * 60
-            logging.info(f"Time control: Total time: {self.total_time}, increment: {self.increment}")
-            return self.total_time, self.increment
-        # Sprawdzenie formatu bez inkrementu: np. '3 min' lub '10 min'
-        elif 'min' in time_control:
-            minutes = int(re.findall(r'\d+', time_control)[0])
-            self.total_time = minutes * 60
-            self.increment = 0
-            logging.info(f"Time control: Total time: {self.total_time}, increment: {self.increment}")
-            return self.total_time, self.increment
-        # Jeśli format jest nieznany, zwracamy None
-        else:
-            raise ValueError(f"Nieznany format kontroli czasowej: {time_control}")
         
     def generate_move_time(self):
         # Losowanie czasu ruchu z zapisanego rozkładu normalnego
@@ -836,12 +840,12 @@ def auto_play_best_moves():
         "MaxPrefetch": "4"
     }
     opening_book = config_dict['opening_book']
+    time_control = config_dict['time_control']
     browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
     driver = browser.configure_browser()
-    site = Factory.create_chess_site(site_choice, driver)
+    site = Factory.create_chess_site(site_choice, driver, time_control)
     driver.get(site.site)
-    time.sleep(2)
-    time_control = config_dict['time_control']
+    time.sleep(2)    
     site.start_first_game(time_control=time_control)
     succes = site.wait_for_game()
     if not succes:
@@ -851,7 +855,7 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, time_control=time_control, opening_books_dir=opening_book)
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_books_dir=opening_book)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         while not game.gameover:
