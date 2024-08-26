@@ -539,22 +539,13 @@ class ChessGame:
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
         self.analysis = analysis
         if multipv == 1:
-            elapsed = time.time() - start_time
-            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
-                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
-                time.sleep((time_limit-elapsed))
             self.variant_start_ply = self.board.ply() + 1
             self.variant_followed_for_ply = 1
             self.followed_variant = analysis[0]['pv']
             best_move = analysis[0]['pv'][0]
         else:
             best_variant = analysis[0]
-            self.analysis = best_variant
-            elapsed = time.time() - start_time
-            logging.info(f"Analysis time: {elapsed}")
-            if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
-                logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
-                time.sleep((time_limit-elapsed))
+            self.analysis = best_variant            
             self.variant_start_ply = self.board.ply() + 1
             self.variant_followed_for_ply = 1
             self.followed_variant = best_variant[0]['pv']
@@ -563,9 +554,13 @@ class ChessGame:
         draw = self.check_threefold_repetition(best_move)
         if draw and self.site.clock.total_seconds() > 20:
             logging.warning(f"Given move {best_move} leads to threefold repetition. Performing deeper analysis.")
-            analysis = self.engine.analyse(self.board, chess.engine.Limit(time=10, depth=20),multipv=1)
+            analysis = self.engine.analyse(self.board, chess.engine.Limit(time=10, depth=depth_limit+10),multipv=1)
             best_move = analysis[0]['pv'][0]
             logging.warning(f"Best move after deeper analysis: {best_move}")
+        elapsed = time.time() - start_time
+        if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
+            logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
+            time.sleep((time_limit-elapsed))
         return best_move, analysis
 
     def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 10, multipv: int = 10):
@@ -1109,12 +1104,12 @@ if __name__ == "__main__":
     listener_thread = threading.Thread(target=keyboard_listener, daemon=True)
     listener_thread.start()
     while stop_program == False:
-        auto_play_best_moves()
+        #auto_play_best_moves()
         #highlight_best_piece()
         #give_non_losing_move()
         try:
-            pass
-            #auto_play_best_moves()
+            #pass
+            auto_play_best_moves()
         except Exception as e:
             logging.error('Critical exception caught')
             logging.error(e)
