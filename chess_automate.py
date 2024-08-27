@@ -396,7 +396,9 @@ class ChessDotComSite(ChessSiteInterface):
                 if not file_exists:
                     headers = ['Run_ID', 'Game_ID', 'Time_control', 'Total_sec', 'Increment', 'Outcome', 'Move_Count', 'Game_URL', 'Timestamp']
                     writer.writerow(headers)
-                writer.writerow(row_to_append)
+                writer.writerow(row_to_append)            
+            logging.info(f"Game over. Game stats: Run_ID: {Run_ID}, Game_ID: {game_id}, Total_time: {self.total_time}, Increment {self.increment}, Outcome: {self.game_outcome}, Moves: {len(self.moves)}, Game URL: {self.game_www}")
+            logging.info(f"Game stats saved to file: {self.game_stats_file}")
         #logging.info(f"Game state: {self.moves}, {self.clock}, {self.gameover}")
 
     def is_game_over(self):
@@ -868,7 +870,7 @@ def auto_play_best_moves():
             if not game_synced:
                 game.sync_board()
             if site.gameover:
-                logging.info(f"Game over. We were playing as: {game.color}. Game outcome: {site.game_outcome}")
+                #logging.info(f"Game over. We were playing as: {game.color}. Game outcome: {site.game_outcome}")
                 break                
             on_move = 'white' if game.board.turn else 'black'
             if on_move != site.color or paused == True:
