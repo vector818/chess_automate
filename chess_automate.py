@@ -430,7 +430,7 @@ class Factory:
             raise ValueError(f"Unsupported browser: {browser_choice}")
     
     @staticmethod
-    def create_chess_site(site_choice, driver, time_control: str):
+    def create_chess_site(site_choice, driver, time_control: str = '3 | 1'):
         if site_choice.lower() == 'chess.com':
             return ChessDotComSite(driver, time_control)
         elif site_choice.lower() == 'lichess.org':
@@ -1027,36 +1027,45 @@ def give_non_losing_move():
         while not game.gameover:
             site.get_site_game_state()
             game_synced = game.is_game_synced()
-            if not game_synced:
+            if not game_synced and not paused:
                 game.sync_board()
                 analyzed = False
             if site.gameover:
                 break
             on_move = 'white' if game.board.turn else 'black'
-            if on_move != site.color or analyzed:
+            if on_move != site.color or analyzed or paused:
                 continue 
             logging.info(f"It's our move.")            
             think = 10
             logging.info(f"Thinking time: {think}. Going to analyze the position and give non losing move.")
             depth_limit = 20
+            ply = game.board.ply()
             move_to_draw, analysis = game.find_non_losing_move(time_limit=think, depth_limit=depth_limit, multipv=10)
             analyzed = True
-            is_blunder = game.blunder_detector(threshold=150)
-            if is_blunder:
-                best_move = game.analysies[-1]['pv'][0]
-                logging.warning("============ BLUNDER DETECTED !!! ============")
-                logging.info(f"Blunder detected. Try to find best move. Highlighting best piece. Square: {chess.square_name(best_move.from_square)}")                
-                #best_move, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
-                square = chess.square_name(best_move.from_square)
-                clicker.highlight_square(square, colour='red')
-            logging.info(f'Sugessted not losing move: {move_to_draw.uci()}')
-            clicker.draw_arrow(move_to_draw.uci(), colour='green', speed=0.4)           
-            logging.info(f'FEN: {game.board.fen()}')
-            logging.info(f"Score evaluation after non losing move: {analysis['score']}")
-            try:
-                logging.info(f"Objective evaluation of position: {game.analysies[-1]['score']}")       
-            except:
-                pass
+            site.get_site_game_state()
+            game_synced = game.is_game_synced()
+            if game_synced and not paused:
+                is_blunder = game.blunder_detector(threshold=150)
+                if is_blunder:
+                    best_move = game.analysies[-1]['pv'][0]
+                    logging.warning("============ BLUNDER DETECTED !!! ============")
+                    logging.info(f"Blunder detected. Try to find best move. Highlighting best piece. Square: {chess.square_name(best_move.from_square)}")                
+                    #best_move, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=False)
+                    square = chess.square_name(best_move.from_square)
+                    clicker.highlight_square(square, colour='red')
+                logging.info(f'Sugessted not losing move: {move_to_draw.uci()}')
+                clicker.draw_arrow(move_to_draw.uci(), colour='green', speed=0.4)           
+                logging.info(f'FEN: {game.board.fen()}')
+                logging.info(f"Score evaluation after non losing move: {analysis['score']}")
+                try:
+                    logging.info(f"Objective evaluation of position: {game.analysies[-1]['score']}")       
+                except:
+                    pass
+            else:
+                analyzed = False
+                logging.info(f'FEN: {game.board.fen()}')
+                logging.info(f"Objective evaluation of position: {game.analysies[-1]['score']}")
+                continue
         game.engine.quit()
         n=0
         while driver.current_url == site.game_www and n<120:
@@ -1110,12 +1119,11 @@ if __name__ == "__main__":
     listener_thread = threading.Thread(target=keyboard_listener, daemon=True)
     listener_thread.start()
     while stop_program == False:
-        #auto_play_best_moves()
         #highlight_best_piece()
-        #give_non_losing_move()
+        give_non_losing_move()
         try:
-            #pass
-            auto_play_best_moves()
+            pass
+            #auto_play_best_moves()
         except Exception as e:
             logging.error('Critical exception caught')
             logging.error(e)
