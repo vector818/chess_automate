@@ -520,8 +520,6 @@ class ChessGame:
         return value
     
     def should_we_resign(self):
-        if self.never_resign == True:
-            return False
         if self.analysis is None:
             return False, None, None
         if self.color == 'white':
@@ -530,6 +528,8 @@ class ChessGame:
             material_diff = self.black_material_score - self.white_material_score
         score = self.analysis[0]['score']
         self.material_diff = material_diff
+        if self.never_resign == True:
+            return False, self.analysis[0]['score'], material_diff
         if (material_diff <= -5 and self.analysis[0]['score'].relative.cp < -150) or self.analysis[0]['score'].relative.cp < -200:
             return True, self.analysis[0]['score'], material_diff
         else:
