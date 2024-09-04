@@ -358,26 +358,12 @@ class ChessDotComSite(ChessSiteInterface):
         return time
     
     def read_moves(self):
-        n = 1
-        xpath_template = '//*[@id="live-game-tab-scroll-container"]/wc-move-list/wc-new-move-list/div/div[{n}]/div'
         san_pattern = re.compile(r'^(?:[KQRBN]?[a-h]?[1-8]?x?[a-h][1-8](?:=[QRBN])?|O-O(?:-O)?)[+#]?$')
-        move_line = self.driver.find_elements('xpath',xpath_template.format(n=n))
-        if not move_line:
-            xpath_template = '//*[@id="live-game-tab-scroll-container"]/wc-move-list/wc-new-move-list/div/div[{n}]/div'
-            return []
+        move_elements = self.driver.find_elements('class name','main-line-ply')
         moves = []
-        while move_line:
-            move_line = self.driver.find_elements('xpath',xpath_template.format(n=n))
-            if not move_line:
-                break
-            if bool(san_pattern.match(move_line[0].text)):
-                moves.append(move_line[0].text)
-            try:
-                if bool(san_pattern.match(move_line[1].text)):
-                    moves.append(move_line[1].text)
-            except:
-                pass
-            n+=1
+        for m in move_elements:
+            if bool(san_pattern.match(m.text)):
+                moves.append(m.text)
         return moves
     
     def get_site_game_state(self):
@@ -1120,10 +1106,10 @@ if __name__ == "__main__":
     listener_thread.start()
     while stop_program == False:
         #highlight_best_piece()
-        give_non_losing_move()
+        #give_non_losing_move()
         try:
-            pass
-            #auto_play_best_moves()
+            #pass
+            auto_play_best_moves()
         except Exception as e:
             logging.error('Critical exception caught')
             logging.error(e)
