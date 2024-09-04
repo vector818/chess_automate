@@ -425,7 +425,7 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None):
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None, never_resign: bool = False):
         self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -441,6 +441,7 @@ class ChessGame:
             chess.ROOK: 5,
             chess.QUEEN: 9
         }
+        self.never_resign = never_resign
         self.white_material_score = 0
         self.black_material_score = 0
         self.material_diff = 0
@@ -519,6 +520,8 @@ class ChessGame:
         return value
     
     def should_we_resign(self):
+        if self.never_resign == True:
+            return False
         if self.analysis is None:
             return False, None, None
         if self.color == 'white':
@@ -829,6 +832,10 @@ def auto_play_best_moves():
     }
     opening_book = config_dict['opening_book']
     time_control = config_dict['time_control']
+    try:
+        never_resign = config_dict['never_resign']
+    except KeyError:
+        never_resign = False
     browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
     driver = browser.configure_browser()
     site = Factory.create_chess_site(site_choice, driver, time_control)
@@ -843,7 +850,7 @@ def auto_play_best_moves():
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_books_dir=opening_book)
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_books_dir=opening_book, never_resign=never_resign)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         while not game.gameover:
