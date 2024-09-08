@@ -124,6 +124,10 @@ class ChessSiteInterface(ABC):
         pass
 
     @abstractmethod
+    def wait_for_puzzle(self):
+        pass
+
+    @abstractmethod
     def promote_pawn(self, promotion_piece):
         pass
 
@@ -269,6 +273,84 @@ class ChessDotComSite(ChessSiteInterface):
         self.game_www = self.driver.current_url
         return True
     
+    def wait_for_puzzle(self):
+        element = (By.CLASS_NAME,'board-layout-main')
+        try:
+            waiter = WebDriverWait(self.driver, 60)
+            waiter.until(EC.presence_of_element_located(element))
+        except:
+            logging.error("Puzzle not detected")
+            return False
+        logging.info("Puzzle detected")
+        return True
+    
+    def get_board_position(self):
+        def parse_piece_info(piece_info):
+            # Mapa bierek
+            piece_map = {
+                'p': chess.PAWN, 'k': chess.KING, 'n': chess.KNIGHT, 'b': chess.BISHOP, 
+                'r': chess.ROOK, 'q': chess.QUEEN
+            }
+            piece = None
+            color = None
+            
+            # Rozpoznanie koloru
+            if 'w' in piece_info:
+                color = chess.WHITE
+            elif 'b' in piece_info:
+                color = chess.BLACK
+            
+            # Rozpoznanie typu bierki
+            for char in piece_info:
+                if char in piece_map:
+                    piece = piece_map[char]
+            
+            return piece, color
+        def parse_square_info(square_info):
+            # Konwersja pola (np. 13 -> c1)
+            file = int(square_info[0]) - 1  # Kolumna (1-8) na 0-7
+            rank = int(square_info[1]) - 1  # Linia (1-8) na 0-7
+            return chess.square(file, rank)
+        
+        board = chess.Board(None)  # None oznacza pustą planszę
+        pieces_list = self.driver.find_elements(By.XPATH,'//*[@id="board-primary"]/div')
+        for piece in pieces_list:
+            piece_info = piece.get_attribute('class')
+            if piece_info[0:5]!='piece':
+                continue
+            parts = piece_info.split()
+            # Znalezienie info o polu i bierce
+            piece_info = None
+            square_info = None
+            for part in parts:
+                if 'square-' in part:
+                    square_info = part.split('-')[1]
+                elif 'piece' in part:
+                    continue  # Pomijamy sam tag 'piece'
+                else:
+                    piece_info = part
+            
+            # Jeśli info o bierce jest przed/po square lub są one razem
+            if piece_info is None:
+                piece_info = parts[-1]
+            
+            # Parsowanie info o bierce i polu
+            piece, color = parse_piece_info(piece_info)
+            square = parse_square_info(square_info)
+            # Dodawanie bierki na planszy
+            if piece and color is not None:
+                board.set_piece_at(square, chess.Piece(piece, color))
+        to_move=self.driver.find_element(By.XPATH,'//*[@id="sidebar"]/section/div/div[1]/span').text
+        if to_move.lower()=='White to move'.lower():
+            board.turn=chess.WHITE
+            self.color = 'white'
+        else:
+            board.turn=chess.BLACK
+            self.color = 'black'
+        return board
+
+
+
     def get_color(self):
         if 'black' in self.driver.find_element('xpath','//*[@id="board-layout-player-bottom"]/div/div[3]').get_attribute("class"):
             self.color = 'black'
@@ -399,6 +481,13 @@ class ChessDotComSite(ChessSiteInterface):
         game_outcome = ' '.join(result.split('\n')[:2])
         game_outcome = game_outcome
         return is_game_over, game_outcome
+    
+    def is_puzzle_solved(self):
+        try:
+            graph = self.driver.find_element(By.CLASS_NAME,'highcharts-background')
+        except NoSuchElementException:
+            return False
+        return True
         
     def resign_game(self):
         self.driver.find_element('class name','resign-button-label').click()
@@ -1068,6 +1157,62 @@ def give_non_losing_move():
         if not succes:
             driver.quit()
             return
+        
+def solve_puzzles():
+    config_dict = yaml.safe_load(open('config.yaml'))['solve_puzzles']
+    browser_choice = config_dict['browser_choice']
+    site_choice = config_dict['site_choice']
+    user_data_dir = config_dict['user_data_dir']
+    profile_directory = config_dict['profile_directory']
+    engine_path = config_dict['engine_path']
+    engine_wieghts_path = config_dict['engine_wieghts_path']
+    backend = config_dict['backend']
+    engine_options = {
+        "WeightsFile": engine_wieghts_path,
+        "Backend": backend,
+        "MinibatchSize": "1",
+        "MaxPrefetch": "4"
+    }
+    browser = Factory.create_browser(browser_choice, user_data_dir, profile_directory)
+    driver = browser.configure_browser()
+    site = Factory.create_chess_site(site_choice, driver)
+    driver.get(site.site)
+    driver.get('https://www.chess.com/puzzles/rated')
+    time.sleep(2)
+    succes = site.wait_for_puzzle()
+    if not succes:
+        driver.quit()
+        return
+    puzzle_solved = False
+    think = 10
+    depth_limit = 1
+    game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options)
+    while True:
+        board_to_solve = site.get_board_position()
+        clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)
+        clicker.get_squares()
+        puzzle_solved = False
+        while not puzzle_solved:            
+            if board_to_solve is None:
+                board_to_solve = site.get_board_position()    
+            logging.info(f"Thinking time: {think}. Going to analyze the position and make best move.")
+            game.board = board_to_solve
+            move_to_make, _ = game.find_best_move(time_limit=think, depth_limit=depth_limit, multipv=1)
+            clicker.make_move(move_to_make.uci())
+            board_to_solve = None
+            puzzle_solved = site.is_puzzle_solved()
+        if puzzle_solved:
+            logging.info(f"Puzzle solved. Going to next puzzle.")
+            time.sleep(0.5)
+            buttons = driver.find_elements(By.CLASS_NAME,'cc-button-component')
+            for button in buttons:
+                if button.get_attribute('aria-label') == 'Next Puzzle':
+                    waiter = WebDriverWait(driver, 30)
+                    waiter.until(EC.element_to_be_clickable(button))
+                    button.click()
+                    break
+            time.sleep(0.5)
+            puzzle_solved = False   
 
 def close_webdrivers():
     for process in psutil.process_iter(['pid', 'name']):
@@ -1114,9 +1259,10 @@ if __name__ == "__main__":
     while stop_program == False:
         #highlight_best_piece()
         #give_non_losing_move()
+        solve_puzzles()
         try:
-            #pass
-            auto_play_best_moves()
+            pass
+            #auto_play_best_moves()
         except Exception as e:
             logging.error('Critical exception caught')
             logging.error(e)
