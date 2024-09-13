@@ -1256,13 +1256,37 @@ if __name__ == "__main__":
     # Uruchomienie wątku nasłuchującego klawiatury
     listener_thread = threading.Thread(target=keyboard_listener, daemon=True)
     listener_thread.start()
+    # ustalenie trybu działania pogramu
+    if len(sys.argv) > 1:
+        mode = sys.argv[1]
+    else:
+        choice = input("Podaj tryb działania programu (1: highlight_best_piece, 2: give_non_losing_move, 3: solve_puzzles, 4:auto_play_best_moves): ")
+        if choice == '1':
+            mode = 'highlight_best_piece'
+        elif choice == '2':
+            mode = 'give_non_losing_move'
+        elif choice == '3':
+            mode = 'solve_puzzles'
+        elif choice == '4':
+            mode = 'auto_play_best_moves'
+        else:
+            logging.error("Nieprawidłowy tryb działania programu.")
+            os._exit(1)
     while stop_program == False:
-        #highlight_best_piece()
-        #give_non_losing_move()
-        solve_puzzles()
         try:
-            pass
-            #auto_play_best_moves()
+            if mode == 'highlight_best_piece':
+                highlight_best_piece()
+            elif mode == 'give_non_losing_move':
+                give_non_losing_move()
+            elif mode == 'solve_puzzles':
+                solve_puzzles()
+            elif mode == 'auto_play_best_moves':
+                auto_play_best_moves()
+            else:
+                logging.error("Nieprawidłowy tryb działania programu.")
+                os._exit(1)
+            #pass
+            auto_play_best_moves()
         except Exception as e:
             logging.error('Critical exception caught')
             logging.error(e)
