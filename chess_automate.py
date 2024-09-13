@@ -937,6 +937,7 @@ def auto_play_best_moves():
         driver.quit()
         return    
     startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    sec_of_last_arrow = -1
     while True:
         moves = []
         color = site.get_color()
@@ -966,8 +967,9 @@ def auto_play_best_moves():
                     except:
                         pass
                 if not resign:
-                    if random.random() > 0.95 and game.board.ply() > 2 and paused == False:
-                        logging.info(f"Drawing random arrow because it's not out move, we play as {game.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
+                    if (time.localtime().tm_sec % 3 == 0 and time.localtime().tm_sec != sec_of_last_arrow) and game.board.ply() > 2 and paused == False:
+                        sec_of_last_arrow = time.localtime().tm_sec
+                        logging.info(f"Drawing random arrow because it's not our move, we play as {game.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
                         clicker.draw_arrow_between_random_squares()
                 continue 
             logging.info(f"It's our move. We play as {site.color}. Game ply: {game.board.ply()}. Time on clock: {site.clock}")
