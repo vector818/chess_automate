@@ -386,6 +386,7 @@ class ChessDotComSite(ChessSiteInterface):
             if 'Play' in b.text:
                 b.click()
                 clicked = True
+                break
         if not clicked:
             logging.error("Play button not found")
             raise ValueError("Play button not found")
