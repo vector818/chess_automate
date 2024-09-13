@@ -386,6 +386,7 @@ class ChessDotComSite(ChessSiteInterface):
             if 'Play' in b.text:
                 b.click()
                 clicked = True
+                break
         if not clicked:
             logging.error("Play button not found")
             raise ValueError("Play button not found")
@@ -1259,10 +1260,10 @@ if __name__ == "__main__":
     while stop_program == False:
         #highlight_best_piece()
         #give_non_losing_move()
-        solve_puzzles()
+        #solve_puzzles()
         try:
-            pass
-            #auto_play_best_moves()
+            #pass
+            auto_play_best_moves()
         except Exception as e:
             logging.error('Critical exception caught')
             logging.error(e)
