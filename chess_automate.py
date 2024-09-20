@@ -932,6 +932,7 @@ def auto_play_best_moves():
     }
     opening_book = config_dict['opening_book']
     time_control = config_dict['time_control']
+    random_move_time = config_dict['random_move_time']
     try:
         never_resign = config_dict['never_resign']
     except KeyError:
@@ -1005,7 +1006,7 @@ def auto_play_best_moves():
                 logging.info(f"Thinking time: {random_think}. Going to analyze the position and pick best move. Board position: {game.board.fen()}")
                 depth_limit = 1 #if game.board.ply() > 12 else 5
                 if game.board.is_checkmate() == False:
-                    move_to_draw, analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1)
+                    move_to_draw, analysis = game.find_best_move(time_limit=random_think, depth_limit=depth_limit, multipv=1, wait_for_time_limit=random_move_time)
                 else:
                     continue
             clicker.make_move(move_to_draw.uci())
