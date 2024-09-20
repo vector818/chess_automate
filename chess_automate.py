@@ -932,7 +932,11 @@ def auto_play_best_moves():
     }
     opening_book = config_dict['opening_book']
     time_control = config_dict['time_control']
-    random_move_time = config_dict['random_move_time']
+    try:
+        instant_moves = config_dict['instant_moves']
+    except KeyError:
+        instant_moves = False
+    random_move_time = not instant_moves
     try:
         never_resign = config_dict['never_resign']
     except KeyError:
