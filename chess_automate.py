@@ -947,7 +947,9 @@ def auto_play_best_moves():
         last_move_ts = time.time()
         while not game.gameover:
             if time.time() - last_move_ts > timedelta(minutes=10).total_seconds():
-                logging.error("Something went wrong. Bot stuck. Returning error.")
+                logging.error(f"Something went wrong. Bot stuck for {str(timedelta(seconds=time.time() - last_move_ts))} returning error.")
+                driver.quit()
+                game.engine.quit()
                 raise ValueError("Game stuck")
             if stop_program:
                 game.engine.quit()
