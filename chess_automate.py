@@ -155,6 +155,10 @@ class ChessSiteInterface(ABC):
     def resign_game(self):
         pass
 
+    @abstractmethod
+    def get_board_position(self):
+        pass
+
 class LichessSite(ChessSiteInterface):
     def __init__(self, driver: webdriver, time_control: str):
         super().__init__(driver, time_control)
@@ -234,6 +238,12 @@ class LichessSite(ChessSiteInterface):
     def start_first_game(self,**kwargs):
         pass
 
+    def wait_for_puzzle(self):
+        pass
+
+    def get_board_position(self):
+        pass
+    
 class ChessDotComSite(ChessSiteInterface):
     def __init__(self, driver: webdriver, time_control: str):
         super().__init__(driver, time_control)
