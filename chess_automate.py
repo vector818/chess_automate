@@ -954,7 +954,13 @@ def auto_play_best_moves():
         game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_books_dir=opening_book, never_resign=never_resign)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
+        last_move_ts = time.time()
         while not game.gameover:
+            if time.time() - last_move_ts > timedelta(minutes=10).total_seconds():
+                logging.error(f"Something went wrong. Bot stuck for {str(timedelta(seconds=time.time() - last_move_ts))} returning error.")
+                driver.quit()
+                game.engine.quit()
+                raise ValueError("Game stuck")
             if stop_program:
                 game.engine.quit()
                 driver.quit()
@@ -1008,6 +1014,7 @@ def auto_play_best_moves():
                 if game.is_safe_premove(game.followed_variant[game.variant_followed_for_ply+1]):
                     logging.info(f"We are following variant with safe premove {game.followed_variant[game.variant_followed_for_ply+1]}, making premove.")
                     clicker.make_move(game.followed_variant[game.variant_followed_for_ply+1].uci())
+                    last_move_ts = time.time()
             except:
                 pass            
             logging.info(f'Sugessted move: {move_to_draw.uci()}')
