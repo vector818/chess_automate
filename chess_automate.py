@@ -525,7 +525,7 @@ class Factory:
             raise ValueError(f"Unsupported site: {site_choice}")
 
 class ChessGame:
-    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None, never_resign: bool = False):
+    def __init__(self, engine_path: str, site_interface: ChessSiteInterface, engine_options: dict = None, start_position: str = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', opening_books_dir: str = None, never_resign: bool = False, expected_moves: int = 110):
         self.color = site_interface.color
         self.followed_variant = []
         self.variant_start_ply = 0
@@ -570,7 +570,6 @@ class ChessGame:
         self.site = site_interface
         total_time = site_interface.total_time
         increment = site_interface.increment
-        expected_moves = 90
         self.expected_moves = expected_moves
         risk_factor = 0.2
         self.risk_factor = risk_factor
@@ -668,15 +667,26 @@ class ChessGame:
             analysis = best_variant
         draw = self.check_threefold_repetition(best_move)
         if draw and self.site.clock.total_seconds() > 20:
-            logging.warning(f"Given move {best_move} leads to threefold repetition. Performing deeper analysis.")
-            analysis = self.engine.analyse(self.board, chess.engine.Limit(time=10, depth=depth_limit+10),multipv=1)
-            best_move = analysis[0]['pv'][0]
-            logging.warning(f"Best move after deeper analysis: {best_move}")
+            best_move = self.give_non_drawing_move(best_move)
         elapsed = time.time() - start_time
         if elapsed < time_limit and num_legal_moves > 2 and wait_for_time_limit and self.board.ply() > 4:
             logging.info(f"Analysis took too short, sleeping for {(time_limit-elapsed)} seconds")
             time.sleep((time_limit-elapsed))
         return best_move, analysis
+    
+    def give_non_drawing_move(self, drawing_move, time_limit: int = 10, depth_limit: int = 15, multipv: int = 5):
+        logging.warning(f"Given move {drawing_move} leads to threefold repetition. Performing deeper analysis.")
+        analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
+        best_move = analysis[0]['pv'][0]
+        if best_move.uci() == drawing_move.uci():
+            logging.warning(f"Best move: {best_move} after deeper analysis is the same as the drawing move. Checking if next line is winning.")
+            next_variant = analysis[1]
+            next_score = self.get_cp_score(next_variant['score'])
+            if next_score > 200:
+                logging.warning(f"Next line with move {next_variant['pv'][0]} is winning with score {next_score}. Playing it.")
+                best_move = next_variant['pv'][0]
+        logging.warning(f"Best move after deeper analysis: {best_move}")
+        return best_move
 
     def find_non_losing_move(self, time_limit: int = 5, depth_limit: int = 10, multipv: int = 10):
         start_time = time.time()
@@ -952,11 +962,12 @@ def auto_play_best_moves():
         driver.quit()
         return    
     startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    expected_moves = config_dict['expected_moves']
     sec_of_last_arrow = -1
     while True:
         moves = []
         color = site.get_color()
-        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_books_dir=opening_book, never_resign=never_resign)
+        game = ChessGame(engine_path=engine_path, site_interface=site, engine_options=engine_options, start_position=startposition, opening_books_dir=opening_book, never_resign=never_resign, expected_moves=expected_moves)
         clicker = ChessBoardClicker(site_interface=site, chess_game=game, debug_mode=True)   
         clicker.get_squares()
         last_move_ts = time.time()
