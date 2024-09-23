@@ -190,6 +190,8 @@ class LichessSite(ChessSiteInterface):
         self.driver.find_element('xpath',promotion_xpath).click()
     
     def read_clock(self):
+        return timedelta(days=999999) 
+        ### TO FIX. THEY CHANGED THE CLOCK DISPLAY and XPATHS
         try:
             time_str = self.driver.find_elements('xpath','//*[@id="main-wrap"]/main/div[1]/div[8]/div[2]')[0].text.replace('\n','')
         except:
@@ -961,7 +963,7 @@ def auto_play_best_moves():
     if not succes:
         driver.quit()
         return    
-    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' # '7K/8/8/8/8/8/pk6/8 w - - 0 1'
+    startposition = '6k1/4P1p1/3Q4/p2P4/3R4/5rr1/P5K1/6R1 w - - 1 40' # 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
     expected_moves = config_dict['expected_moves']
     sec_of_last_arrow = -1
     while True:
