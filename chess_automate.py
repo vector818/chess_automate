@@ -680,7 +680,7 @@ class ChessGame:
         logging.warning(f"Given move {drawing_move} leads to threefold repetition. Performing deeper analysis.")
         analysis = self.engine.analyse(self.board, chess.engine.Limit(time=time_limit, depth=depth_limit),multipv=multipv)
         best_move = analysis[0]['pv'][0]
-        if best_move.uci() == drawing_move.uci():
+        if best_move.uci() == drawing_move.uci() and len(analysis) > 1:
             logging.warning(f"Best move: {best_move} after deeper analysis is the same as the drawing move. Checking if next line is winning.")
             next_variant = analysis[1]
             next_score = self.get_cp_score(next_variant['score'])
