@@ -966,7 +966,7 @@ def auto_play_best_moves():
     if not succes:
         driver.quit()
         return    
-    startposition = '6k1/4P1p1/3Q4/p2P4/3R4/5rr1/P5K1/6R1 w - - 1 40' # 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    startposition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' #'6k1/4P1p1/3Q4/p2P4/3R4/5rr1/P5K1/6R1 w - - 1 40'
     expected_moves = config_dict['expected_moves']
     sec_of_last_arrow = -1
     while True:
