@@ -898,16 +898,19 @@ class ChessBoardClicker:
         
 
     def draw_arrow_between_random_squares(self, speed: float = 0.1, colour: str = 'red'):
-        # Temp copy of actual game board
-        tmp_board = copy.deepcopy(self.game.board)
-        # Change perspective (we only executing this method when it is not our move)
-        tmp_board.turn = not tmp_board.turn
-        # list of all legal moves in tmp_board
-        legal_moves = list(tmp_board.legal_moves)
-        # Choose random move
-        random_move = random.choice(legal_moves)
-        # Draw arrow with randomly chosen move
-        self.draw_arrow(str(random_move.uci()), speed, colour)        
+        try:
+            # Temp copy of actual game board
+            tmp_board = copy.deepcopy(self.game.board)
+            # Change perspective (we only executing this method when it is not our move)
+            tmp_board.turn = not tmp_board.turn
+            # list of all legal moves in tmp_board
+            legal_moves = list(tmp_board.legal_moves)
+            # Choose random move
+            random_move = random.choice(legal_moves)
+            # Draw arrow with randomly chosen move
+            self.draw_arrow(str(random_move.uci()), speed, colour)
+        except Exception as e:
+            logging.info(f"Can't draw random arrow. Error: {e}")       
     
     def make_move(self, move_uci: str, move_speed: float = 0.1, drag_speed: float = 0.2):
         start_square = move_uci[:2]
